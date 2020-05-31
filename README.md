@@ -1,19 +1,38 @@
+
+#Access bot
+
+## Inspiration
+No one can deny that there is plenty of information for general public to plan their day and visit restaurants, museums and go to work , however accessibility information for people living with disabilities is still extremely limited.  Websites like Yelp and similar reduce the concept of "accessibility" to a binary selection (Wheelchair accessible or not).  Unfortunately this doesn't help the majority of people stranded at home with different disabilities. For example, visually or hearing impaired does not get any help from the current categories.  Many people are left having to call or email and that can be discouraging and a way to block them from integrating into society. We believe that technology, in this case AI applied to an assistant,  have the potential to make life better for a lot of people.
+
+## What it does
+Accessibility-Check bot have 2 main functions, the first one is to organize a coordinated crowdsourcing effort to map restaurant, store , offices, etc.  It basically shoot  a quick set of questions like "Do you see a ramp?", "Can you ask for a Braile menu?" , "Is the bathroom in the first floor?", etc.  All these questions are based on American’s with Disability Act (ADA) and Open travel alliance (OTA).  
+
+The second functionality of this bot is to inform the general public about the accessibility based on their location. A mechanism will be included to catch unanswered queries, save them in a database and add them to the crowdsource queue.
+
+Stack we'll be using: WIT.AI (NLP), Yelp, GoogleAPI's (to map locations), React (Frontend), Node.js + Express , GraphQL/AWS Appsync (DB, storage).
+
+
+Github Repo:
+https://github.com/six100/accessbot
+
+
+This project is still in a very early stage and  open to new ideas, your ideas.  Contact me if you are interested in joining forces. 
+
+## Looking for:
+- Node, Express experts.
+- API Guru (To connect 3rd party Geo-location API's, other APIs)
+- ML, NLP Jedi (To take it to the next level)
+- Anyone that want to be part of this.
+
+## Objectives:
+- To make a solution that solves a problem in the real world.
+- To find the best, leanest, most effective tech solution for all the challenges ahead of us.
+- To meet great people.
+- To Open Source the code at the end.
+
+
+
 # Installation
-
-## Get code
-
-Clone this repo in your local machine
-
-```bash
-git clone https://github.com/foo
-```
-
- Move inside the project folder
-
-```bash
-cd foo
-```
-
 
 Confirm you have NodeJs 10.x or higher
 
@@ -21,6 +40,11 @@ Confirm you have NodeJs 10.x or higher
 Node-v
 ```
 
+Install the code dependencies
+
+```
+yarn install
+```
 
 Enable .env file
 
