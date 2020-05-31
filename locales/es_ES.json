@@ -1,0 +1,74 @@
+{
+  "profile": {
+    "greeting": "Welcome {{user_first_name}}!"
+  },
+  "menu": {
+    "support": "support",
+    "order": "order",
+    "help": "help",
+    "suggestion": "suggestions",
+    "shop": "shop",
+    "start_over": "start over"
+  },
+  "get_started": {
+    "welcome": "Hi! Welcome to Bot",
+    "guidance": "At any time, use the menu below to navigate through the features",
+    "help": "What we can do to help you today?"
+  },
+  "leadgen": {
+    "promo": "Hi {{userFirstName}}, message here",
+    "title": "title",
+    "subtitle": "subtitle",
+    "apply": "Apply",
+    "coupon": "coupon text"
+  },
+  "curation": {
+    "prompt": "prompt question?",
+    "occasion": "occasion",
+    "price": "price",
+    "me": "me",
+    "someone": "Someone",
+    "work": "Work",
+    "dinner": "Dinner",
+    "interview": "Interview",
+    "sales": "sales",
+    "shop": "Shop",
+    "title": "title",
+    "subtitle": "subtitle",
+    "show": "show"
+  },
+  "order": {
+    "prompt": "We'll be happy to help you. Select from the following",
+    "search": "Search",
+    "account": "account",
+    "dialog": "dialog",
+    "searching": "Searching...",
+    "number": "Sure, please write the id",
+    "status": "Status"
+  },
+  "care": {
+    "prompt": "Prompt?",
+    "order": "Order",
+    "billing": "Billing Issues",
+    "other": "Other",
+    "issue": "Hi {{userFirstName}}, my name is {{agentFirstName}}, I'm here to assist you with any questions you might have about your {{topic}}.",
+    "default": "Hi {{userFirstName}}, my name is {{agentFirstName}}, I'm here to assist you today. How can I help you?",
+    "style": "Hi {{userFirstName}}, my name is {{agentFirstName}}, I’m here to answer questions you might have",
+    "end": "This is as far as the demo goes. Leverage the power of the messenger platform for your business.",
+    "help": "Help"
+  },
+  "survey": {
+    "prompt": "Hi, want to get quick feedback on your recent experience with {{agentFirstName}}",
+    "positive": "Thanks for the feedback",
+    "neutral": "Thanks for the feedback, if there something we should improve feel free to comment with #suggestion",
+    "negative": "Thanks for telling us. Sorry to hear that, if there something we can do to turn this let us know",
+    "suggestion": "Your suggestion has been recorded for future review by the team. If this is something we need to get back to you right now just comment \"help\""
+  },
+  "chat_plugin": {
+    "prompt": "Thanks for visiting us, please be sure to check X"
+  },
+  "fallback": {
+    "any": "Sorry, but I don’t recognize \"{{message}}\".",
+    "attachment": "Thanks for sending this attachment, we can connect you to an agent to review it or we can start over"
+  }
+}
