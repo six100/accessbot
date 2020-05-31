@@ -30,7 +30,9 @@ This project is still in a very early stage and  open to new ideas, your ideas. 
 - To meet great people.
 - To Open Source the code at the end.
 
+![Add Info](https://user-images.githubusercontent.com/6516814/83339081-fea49780-a27e-11ea-8b7e-cd6917bf35ce.jpg)
 
+![Get Info](https://user-images.githubusercontent.com/6516814/83339102-33185380-a27f-11ea-8403-c7600cf544b7.jpg)
 
 # Installation
 
