@@ -1,0 +1,12 @@
+{
+	"profile": {
+		"greeting": "profile.greeting"
+	},
+	"menu": {
+		"support": "menu.support",
+		"order": "menu.order",
+		"help": "menu.help",
+		"suggestion": "menu.suggestion",
+		"shop": "menu.shop"
+	}
+}
