@@ -9,26 +9,7 @@ Accessibility-Check bot have 2 main functions, the first one is to organize a co
 
 The second functionality of this bot is to inform the general public about the accessibility based on their location. A mechanism will be included to catch unanswered queries, save them in a database and add them to the crowdsource queue.
 
-Stack we'll be using: WIT.AI (NLP), Yelp, GoogleAPI's (to map locations), React (Frontend), Node.js + Express , GraphQL/AWS Appsync (DB, storage).
 
-
-Github Repo:
-https://github.com/six100/accessbot
-
-
-This project is still in a very early stage and  open to new ideas, your ideas.  Contact me if you are interested in joining forces. 
-
-## Looking for:
-- Node, Express experts.
-- API Guru (To connect 3rd party Geo-location API's, other APIs)
-- ML, NLP Jedi (To take it to the next level)
-- Anyone that want to be part of this.
-
-## Objectives:
-- To make a solution that solves a problem in the real world.
-- To find the best, leanest, most effective tech solution for all the challenges ahead of us.
-- To meet great people.
-- To Open Source the code at the end.
 
 ![Add Info](https://user-images.githubusercontent.com/6516814/83339081-fea49780-a27e-11ea-8b7e-cd6917bf35ce.jpg)
 
