@@ -22,6 +22,15 @@
     "apply": "Apply",
     "coupon": "coupon text"
   },
+  "location": {
+    "prompt": "What Location do you want to use?",
+    "current": "We are using your current location",
+    "address": "Do you know exact address?",
+    "confirm": "Can you confirm that you are located at",
+    "nearby": "This are the places close to you",
+    "userlocation":"Use my location",
+    "newlocation":"Different location"
+  },
   "curation": {
     "prompt": "prompt question?",
     "occasion": "occasion",
