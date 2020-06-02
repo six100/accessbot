@@ -2,6 +2,7 @@
 "use strict";
 
 const Curation = require("./curation"),
+  Location = require("./location"),  
   Order = require("./order"),
   Response = require("./response"),
   Care = require("./care"),
@@ -93,13 +94,22 @@ module.exports = class Receive {
         Response.genText(i18n.__("get_started.guidance")),
         Response.genQuickReply(i18n.__("get_started.help"), [
           {
-            title: i18n.__("menu.suggestion"),
-            payload: "CURATION"
+            title: i18n.__("menu.review"),
+            payload: "REVIEW_LOCATION"
           },
           {
-            title: i18n.__("menu.help"),
-            payload: "CARE_HELP"
+            title: i18n.__("menu.check"),
+            payload: "CHECK_LOCATION"
           }
+          // ,
+          // {
+          //   title: "suggestion v2.0",
+          //   payload: "CURATION"
+          // },
+          // {
+          //   title: i18n.__("menu.help"),
+          //   payload: "CARE_HELP"
+          // }
         ])
       ];
     }
@@ -177,6 +187,9 @@ module.exports = class Receive {
     } else if (payload.includes("CURATION") || payload.includes("COUPON")) {
       let curation = new Curation(this.user, this.webhookEvent);
       response = curation.handlePayload(payload);
+    } else if (payload.includes("LOCATION")) {
+      let location = new Location(this.user, this.webhookEvent);
+      response = location.handlePayload(payload);
     } else if (payload.includes("CARE")) {
       let care = new Care(this.user, this.webhookEvent);
       response = care.handlePayload(payload);
@@ -219,13 +232,22 @@ module.exports = class Receive {
 
     let response = Response.genQuickReply(welcomeMessage, [
       {
-        title: i18n.__("menu.suggestion"),
-        payload: "CURATION"
+        title: i18n.__("menu.review"),
+        payload: "REVIEW_LOCATION"
       },
       {
-        title: i18n.__("menu.help"),
-        payload: "CARE_HELP"
+        title: i18n.__("menu.check"),
+        payload: "CHECK_LOCATION"
       }
+      // ,
+      // {
+      //   title: "curation",
+      //   payload: "CURATION"
+      // },
+      // {
+      //   title: i18n.__("menu.help"),
+      //   payload: "CARE_HELP"
+      // }
     ]);
 
     let requestBody = {

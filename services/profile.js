@@ -169,7 +169,15 @@ module.exports = class Profile {
           title: i18n.__("menu.shop"),
           url: config.shopUrl,
           webview_height_ratio: "full"
-        }
+        },
+        {
+        title: i18n.__("menu.review"),
+        payload: "REVIEW_LOCATION"
+      },
+      {
+        title: i18n.__("menu.review"),
+        payload: "CHECK_LOCATION"
+      }
       ]
     };
 

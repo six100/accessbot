@@ -16,7 +16,7 @@ module.exports = class Curation {
     let response;
 
     switch (payload) {
-      case "LOCATION":
+      case "REVIEW_LOCATION":
         response = [
           Response.genQuickReply(i18n.__("location.prompt"), [
             {
@@ -30,7 +30,20 @@ module.exports = class Curation {
           ])
         ];
         break;
-
+      case "CHECK_LOCATION":
+        response = [
+          Response.genQuickReply(i18n.__("location.prompt"), [
+            {
+              title: i18n.__("location.userlocation"),
+              payload: "USER_LOCATION"
+            },
+            {
+              title: i18n.__("location.newlocation"),
+              payload: "NEW_LOCATION"
+            }
+          ])
+        ];
+        break;
       
       case "USER_LOCATION":
       case "NEW_LOCATION":
