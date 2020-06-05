@@ -11,9 +11,9 @@ The second functionality of this bot is to inform the general public about the a
 
 
 
-![Add Info](https://user-images.githubusercontent.com/6516814/83339081-fea49780-a27e-11ea-8b7e-cd6917bf35ce.jpg)
+![Add Info](https://user-images.githubusercontent.com/6516814/83883190-fffb1780-a6f7-11ea-90b2-bc61d96f7632.jpg)
 
-![Get Info](https://user-images.githubusercontent.com/6516814/83339102-33185380-a27f-11ea-8403-c7600cf544b7.jpg)
+![Get Info](https://user-images.githubusercontent.com/6516814/83882961-b3afd780-a6f7-11ea-8118-26e85b6424b0.jpg)
 
 # Installation
 

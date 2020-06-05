@@ -14,9 +14,9 @@
     "check": "Check accessibility"
 	},
 	"get_started": {
-		"welcome": "Hi {{userFirstName}}! Welcome to the Accessibility Bot",
-		"guidance": "I can help you review the accessibility of a place",
-		"help": "What do you want to do?"
+		"welcome": "Hola {{userFirstName}}! Gracias por visitar el Bot de accessibilidad",
+		"guidance": "Te puedo ayudar a encontrar si un lugar es Accessible o no",
+		"help": "Que quieres hacer?"
 	},
 	"leadgen": {
 		"promo": "Hi {{userFirstName}}, message here",
