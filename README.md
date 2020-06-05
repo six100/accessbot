@@ -1,5 +1,5 @@
 
-#Access bot
+# Access bot
 
 ## Inspiration
 No one can deny that there is plenty of information for general public to plan their day and visit restaurants, museums and go to work , however accessibility information for people living with disabilities is still extremely limited.  Websites like Yelp and similar reduce the concept of "accessibility" to a binary selection (Wheelchair accessible or not).  Unfortunately this doesn't help the majority of people stranded at home with different disabilities. For example, visually or hearing impaired does not get any help from the current categories.  Many people are left having to call or email and that can be discouraging and a way to block them from integrating into society. We believe that technology, in this case AI applied to an assistant,  have the potential to make life better for a lot of people.
