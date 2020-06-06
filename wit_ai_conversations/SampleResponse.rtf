@@ -1,0 +1,20 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1671\cocoasubrtf600
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fnil\fcharset0 Menlo-Regular;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+{\*\expandedcolortbl;;\csgray\c0;}
+\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 Sample Input :\
+\
+Is theme-park accessible for visually impaired?\
+\
+\
+Response:\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
+
+\f1\fs22 \cf2 \CocoaLigature0 curl \\\
+>  -H 'Authorization: Bearer TPCV2XD22ZEC7Q6ERVIX5TNJULNZ4UIF' \\\
+>  'https://api.wit.ai/message?v=20200606&q=Is%20theme-park%20accessible%20for%20visually%20impaired%3F'\
+\{"text":"Is theme-park accessible for visually impaired?","intents":[\{"id":"622263308645974","name":"request_accessibility_info","confidence":1\}],"entities":\{"wit_disability:wit_disability":[\{"id":"705172783635479","name":"wit_disability","role":"wit_disability","start":29,"end":47,"body":"visually impaired?","confidence":0.9031,"entities":[],"suggested":true,"value":"visually impaired?","type":"value"\}],"wit$location:location":[\{"id":"257567208661149","name":"wit$location","role":"location","start":3,"end":13,"body":"theme-park","confidence":0.705,"entities":[],"suggested":true,"value":"theme-park","type":"value"\}]\},"traits":\{\}\}}
