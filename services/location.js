@@ -31,6 +31,7 @@ module.exports = class Location {
             }
           ]);
         break;
+     
 
       case "LOCATION_UNKNOWN":
         response = [
@@ -82,7 +83,19 @@ module.exports = class Location {
         response =[
           Response.genText("Happy Fries is an American Dinner with traditional Menu, famous for their Cajun Fries."),
           //TODO: Add A template for Restaurants  
+          //Next steps
+          Response.genQuickReply("Need more information?", [
+            {
+              title:"Show Accessibility",
+              payload: "LOCATION_AMENITIES"
+            },
+            {
+              title:"Show Photos",
+              payload: "LOCATION_GALLERY"
+            }
+          ])
         ];
+       
         break;
 
       case "LOCATION_AMENITIES":
@@ -90,29 +103,43 @@ module.exports = class Location {
         response = [
           Response.genText("This place has a ramp in the entrance"),
           Response.genText("Braile Menu is available"),
-          Response.genText("Do you want to see photos of the place?"),
-        ];
-        break;
-
-      case "LOCATION_GALLERY":
-        response =[
-          //TODO: Replace this for a Photo Gallery
-          Response.genText("This is the Photo Gallery"),
-          
           //Next steps
-          Response.genQuickReply("What else can I help you with?", [
+          Response.genQuickReply("Please choose one", [
             {
-              title:"Ask question",
-              payload: "LOCATION_NEW_QUESTION"
+              title:"Show me photos",
+              payload: "LOCATION_GALLERY"
             },
             {
               title:"Nearby places",
               payload: "LOCATION_NEARBY"
             },
             {
-              title:"New Search",
-              payload: "LOCATION_REVIEW"
+              title:"Ask owner a question",
+              payload: "LOCATION_NEW_QUESTION"
             }
+          ])
+
+        ];
+        break;
+
+      case "LOCATION_GALLERY":
+        response =[
+          //TODO: Replace this for a Photo Gallery
+          Response.genText("These are photos of the place"),
+          //Next steps
+          Response.genQuickReply("What else can I help you with?", [
+            {
+              title:"Show Accessibility",
+              payload: "LOCATION_AMENITIES"
+            },
+            {
+              title:"Nearby places",
+              payload: "LOCATION_NEARBY"
+            },
+            {
+              title:"Ask owner a question",
+              payload: "LOCATION_NEW_QUESTION"
+            },
           ])
         ];
         break;
@@ -141,7 +168,22 @@ module.exports = class Location {
         ];
         break;
 
-        default : response = [ Response.genText("default response")]
+        default : response = [ 
+          Response.genQuickReply("Happy Fries available information", [
+            {
+              title:"General",
+              payload: "LOCATION_CHOSEN"
+            },
+            {
+              title:"Accessibility",
+              payload: "LOCATION_AMENITIES"
+            },
+            {
+              title:"Photos",
+              payload: "LOCATION_GALLERY"
+            },
+          ])
+        ]
       
     }
 
