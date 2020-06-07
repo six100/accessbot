@@ -9,9 +9,9 @@
 		"suggestion": "suggestions v2",
 		"shop": "shop",
 		"start_over": "start over",
-    "startme": "Start Accessibility Bot",
-    "review": "Review accessibility",
-    "check": "Check accessibility"
+		"startme": "Start Accessibility Bot",
+		"review": "Review accessibility",
+		"check": "Check accessibility"
 	},
 	"get_started": {
 		"welcome": "Hi {{userFirstName}}! Welcome to the Accessibility Bot",
@@ -82,5 +82,6 @@
 	"fallback": {
 		"any": "Sorry, but I don’t recognize \"{{message}}\".",
 		"attachment": "Thanks for sending this attachment, we can connect you to an agent to review it or we can start over"
-	}
+	},
+	"Checking": "Checking"
 }

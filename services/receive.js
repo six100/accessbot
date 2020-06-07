@@ -95,11 +95,11 @@ module.exports = class Receive {
         Response.genQuickReply(i18n.__("get_started.help"), [
           {
             title: i18n.__("menu.review"),
-            payload: "REVIEW_LOCATION"
+            payload: "LOCATION"
           },
           {
             title: i18n.__("menu.check"),
-            payload: "CHECK_LOCATION"
+            payload: "LOCATION_CHECK"
           }
           // ,
           // {
@@ -233,7 +233,7 @@ module.exports = class Receive {
     let response = Response.genQuickReply(welcomeMessage, [
       {
         title: i18n.__("menu.review"),
-        payload: "REVIEW_LOCATION"
+        payload: "LOCATION_REVIEW"
       },
       {
         title: i18n.__("menu.check"),
