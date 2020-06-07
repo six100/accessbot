@@ -16,30 +16,45 @@ module.exports = class Curation {
     let response;
 
     switch (payload) {
-      case "REVIEW_LOCATION":
+      case "LOCATION_CONFIRMATION":
         response = [
-          Response.genQuickReply(i18n.__("location.prompt"), [
+          Response.genQuickReply("Can you confirm this is your current location", [
             {
-              title: i18n.__("location.userlocation"),
-              payload: "USER_LOCATION"
+              //TODO: This address needs to come from the device.
+              title:"122 Broadway Ave.",
+              payload: "LOCATION_SEARCH"
             },
             {
-              title: i18n.__("location.newlocation"),
-              payload: "NEW_LOCATION"
+              title:"Different Address",
+              payload: "LOCATION_UNKNOWN"
             }
           ])
         ];
         break;
-      case "CHECK_LOCATION":
+      case "LOCATION_UNKNOWN":
         response = [
-          Response.genQuickReply(i18n.__("location.prompt"), [
+          //TODO: This should be an utterance by the user, not a hardwired QuickReply
+          Response.genQuickReply("Where are you located now?", [
             {
-              title: i18n.__("location.userlocation"),
-              payload: "USER_LOCATION"
-            },
+              title:"123 Broadway Ave.",
+              payload: "LOCATION_SEARCH"
+            }
+          ])
+        ];
+        break;
+      case "LOCATION_SEARCH":
+        response = [
+          Response.genText(i18n.__("Checking")),
+          // TODO: HERE IMPLEMENT LOGIC
+          // 1. CONNECT TO YELP API, GET PLACES CLOSE TO ADDRESS PROVIDED
+          // 2. ATTEMPT TO MATCH RESULTS WITH ACCESS-BOT DB.
+          // 3. ASSEMBLE NEW PAYLOAD ONLY WITH MATCHED RESULTS.
+
+          //TODO: This should be an actual Payload
+          Response.genQuickReply("Where are you located now?", [
             {
-              title: i18n.__("location.newlocation"),
-              payload: "NEW_LOCATION"
+              title:"Show Results",
+              payload: "LOCATION_REFINE"
             }
           ])
         ];
