@@ -32,7 +32,8 @@
 		"confirm": "Can you confirm that you are located at",
 		"nearby": "These are the places close to you",
 		"userlocation": "Use my location",
-		"newlocation": "Different location"
+		"newlocation": "Different location",
+		"showAmenities":"Show Accessibility"
 	},
 	"curation": {
 		"prompt": "Are you looking for an outfit for yourself or someone else?",
@@ -47,7 +48,8 @@
 		"shop": "Shop this look",
 		"title": "Summer collection 2019",
 		"subtitle": "Featured outfit",
-		"show": "Another look"
+		"show": "Another look",
+		"interview": "curation.interview"
 	},
 	"order": {
 		"prompt": "We'll be happy to help you. Select from the following",
@@ -83,5 +85,12 @@
 		"any": "Sorry, but I don’t recognize \"{{message}}\".",
 		"attachment": "Thanks for sending this attachment, we can connect you to an agent to review it or we can start over"
 	},
-	"Checking": "Checking"
+	"demo":{
+		"name":"Joe Dinner, 122 Broadway St.",
+		"description":"American Dinner with traditional Menu, famous for their Cajun Fries.",
+		"image":"dinners.jpeg"
+	},
+	"Checking": "Checking",
+	"Happy Fries": "Happy Fries",
+	"American Dinner with traditional Menu, famous for their Cajun Fries.": "American Dinner with traditional Menu, famous for their Cajun Fries."
 }

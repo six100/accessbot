@@ -14,6 +14,9 @@ module.exports = class Location {
 
   handlePayload(payload) {
     let response;
+    let placeName;
+    let placeDescription;
+
     console.log(payload);
 
     switch (payload) {
@@ -68,34 +71,68 @@ module.exports = class Location {
           Response.genQuickReply("Please choose one", [
             {
               //TODO: This address needs to come directly from the device.
-              title:"The Lunch, 120 10th St.",
+              title:"Thai Bistro",
               payload: "LOCATION_CHOSEN"
             },
             {
-              title:"Happy Fries, 124 10th St.",
+              title:"Happy Fries",
               payload: "LOCATION_CHOSEN"
             }
           ])
         ];
         break;
       
-      case "LOCATION_CHOSEN":
-        response =[
-          Response.genText("Happy Fries is an American Dinner with traditional Menu, famous for their Cajun Fries."),
-          //TODO: Add A template for Restaurants  
-          //Next steps
-          Response.genQuickReply("Need more information?", [
-            {
-              title:"Show Accessibility",
-              payload: "LOCATION_AMENITIES"
-            },
-            {
-              title:"Show Photos",
-              payload: "LOCATION_GALLERY"
-            }
-          ])
-        ];
+      case "LOCATION_CHOSEN2":
+
+          // placeName= "Happy Fries";
+          // placeDescription ="American Dinner with traditional Menu, famous for their Cajun Fries.";
+
+          // response = [
+          //   Response.genText(placeName),
+          // ];
+
+          console.log( `${config.appUrl}/demo/happyfries.jpeg`);
+
+          response = Response.genGenericTemplate(
+            `https://www.facebook.com/photo?fbid=10154455755801542`,
+            `Qwerty`,
+            `abc123`,
+            [
+              Response.genWebUrlButton(
+                "Go to external link",
+                `${config.shopUrl}/six100/accessbot`
+              ),
+              Response.genPostbackButton(
+                "Accessibility Info",
+                "LOCATION_AMENITIES"
+              ),
+              Response.genPostbackButton(
+                "Show Photos",
+                "LOCATION_GALLERY"
+              ),
+              Response.genPostbackButton(
+                "Show Map",
+                "LOCATION_MAP"
+              ),
+            ]
+          );
        
+        break;
+
+      case "LOCATION_CHOSEN":
+        response = [
+          Response.genText(
+            i18n.__("leadgen.promo", {
+              userFirstName: this.user.firstName
+            })
+          ),
+          Response.genGenericTemplate(
+            `${config.shopUrl}/images/demo/${i18n.__("demo.image")}`,
+            i18n.__("demo.name"),
+            i18n.__("demo.description"),
+            [Response.genPostbackButton(i18n.__("location.showAmenities"), "LOCATION_AMENITIES")]
+          )
+        ];
         break;
 
       case "LOCATION_AMENITIES":
@@ -106,17 +143,18 @@ module.exports = class Location {
           //Next steps
           Response.genQuickReply("Please choose one", [
             {
-              title:"Show me photos",
+              title:"Show Photos",
+              payload: "LOCATION_GALLERY"
+            },
+            {
+              title:"Show Map",
               payload: "LOCATION_GALLERY"
             },
             {
               title:"Nearby places",
               payload: "LOCATION_NEARBY"
             },
-            {
-              title:"Ask owner a question",
-              payload: "LOCATION_NEW_QUESTION"
-            }
+            
           ])
 
         ];
@@ -133,12 +171,38 @@ module.exports = class Location {
               payload: "LOCATION_AMENITIES"
             },
             {
+              title:"Show Map",
+              payload: "LOCATION_GALLERY"
+            },
+            {
               title:"Nearby places",
               payload: "LOCATION_NEARBY"
             },
+            // {
+            //   title:"Ask question",
+            //   payload: "LOCATION_NEW_QUESTION"
+            // },
+          ])
+        ];
+        break;
+
+        case "LOCATION_MAP":
+        response =[
+          //TODO: Replace this for a Photo Gallery
+          Response.genText("This is a Map of the place"),
+          //Next steps
+          Response.genQuickReply("What else can I help you with?", [
             {
-              title:"Ask owner a question",
-              payload: "LOCATION_NEW_QUESTION"
+              title:"Show Accessibility",
+              payload: "LOCATION_AMENITIES"
+            },
+            {
+              title:"Show Photos",
+              payload: "LOCATION_AMENITIES"
+            },
+            {
+              title:"Nearby places",
+              payload: "LOCATION_NEARBY"
             },
           ])
         ];
@@ -169,7 +233,7 @@ module.exports = class Location {
         break;
 
         default : response = [ 
-          Response.genQuickReply("Happy Fries available information", [
+          Response.genQuickReply("Available information", [
             {
               title:"General",
               payload: "LOCATION_CHOSEN"
