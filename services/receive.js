@@ -99,12 +99,12 @@ module.exports = class Receive {
           },
           {
             title: i18n.__("menu.check"),
-            payload: "CHECK_LOCATION"
+            payload: "LOCATION_CHECK"
           },
-          {
-            title: "suggestion",
-            payload: "CURATION"
-          },
+          // {
+          //   title: "suggestion",
+          //   payload: "CURATION"
+          // },
           // {
           //   title: i18n.__("menu.help"),
           //   payload: "CARE_HELP"
@@ -236,7 +236,7 @@ module.exports = class Receive {
       },
       {
         title: i18n.__("menu.check"),
-        payload: "CHECK_LOCATION"
+        payload: "LOCATION_CHECK"
       }
       // ,
       // {

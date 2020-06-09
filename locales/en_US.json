@@ -14,7 +14,7 @@
 		"check": "Check accessibility"
 	},
 	"get_started": {
-		"welcome": "Hi {{userFirstName}}! Welcome to the Accessibility Bot",
+		"welcome": "Hi {{userFirstName}}! Welcome to Accessbot",
 		"guidance": "I can help you review the accessibility of a place",
 		"help": "What do you want to do?"
 	},
@@ -33,7 +33,7 @@
 		"nearby": "These are the places close to you",
 		"userlocation": "Use my location",
 		"newlocation": "Different location",
-		"showAmenities":"Show Accessibility"
+		"showAmenities": "Show Accessibility"
 	},
 	"curation": {
 		"prompt": "Are you looking for an outfit for yourself or someone else?",
@@ -86,11 +86,8 @@
 		"attachment": "Thanks for sending this attachment, we can connect you to an agent to review it or we can start over"
 	},
 	"demo":{
-		"name":"Joe Dinner, 122 Broadway St.",
-		"description":"American Dinner with traditional Menu, famous for their Cajun Fries.",
-		"image":"dinners.jpeg"
-	},
-	"Checking": "Checking",
-	"Happy Fries": "Happy Fries",
-	"American Dinner with traditional Menu, famous for their Cajun Fries.": "American Dinner with traditional Menu, famous for their Cajun Fries."
+		"name": "Joe Dinner, 124 Broadway St.",
+		"description": "American Dinner with traditional Menu, famous for their Cajun Fries.",
+		"image": "dinners.png"
+	}
 }

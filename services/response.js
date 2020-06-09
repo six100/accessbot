@@ -131,21 +131,21 @@ module.exports = class Response {
       },
       {
         title: i18n.__("menu.check"),
-        payload: "CHECK_LOCATION"
+        payload: "LOCATION_CHECK"
       }
-      ,
-      {
-        title: "suggestion v2.3",
-        payload: "CURATION"
-      },
-      {
-        title: "coupon",
-        payload: "SUMMER_COUPON"
-      },
-      {
-        title: i18n.__("menu.help"),
-        payload: "CARE_HELP"
-      }
+      // ,
+      // {
+      //   title: "suggestion v2.3",
+      //   payload: "CURATION"
+      // },
+      // {
+      //   title: "coupon",
+      //   payload: "SUMMER_COUPON"
+      // },
+      // {
+      //   title: i18n.__("menu.help"),
+      //   payload: "CARE_HELP"
+      // }
     ]);
 
     return [welcome, guide, curation];

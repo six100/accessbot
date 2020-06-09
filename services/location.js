@@ -29,7 +29,7 @@ module.exports = class Location {
               payload: "LOCATION_SEARCH"
             },
             {
-              title:"Different Address",
+              title:"No, it's not",
               payload: "LOCATION_UNKNOWN"
             }
           ]);
@@ -81,43 +81,6 @@ module.exports = class Location {
           ])
         ];
         break;
-      
-      case "LOCATION_CHOSEN2":
-
-          // placeName= "Happy Fries";
-          // placeDescription ="American Dinner with traditional Menu, famous for their Cajun Fries.";
-
-          // response = [
-          //   Response.genText(placeName),
-          // ];
-
-          console.log( `${config.appUrl}/demo/happyfries.jpeg`);
-
-          response = Response.genGenericTemplate(
-            `https://www.facebook.com/photo?fbid=10154455755801542`,
-            `Qwerty`,
-            `abc123`,
-            [
-              Response.genWebUrlButton(
-                "Go to external link",
-                `${config.shopUrl}/six100/accessbot`
-              ),
-              Response.genPostbackButton(
-                "Accessibility Info",
-                "LOCATION_AMENITIES"
-              ),
-              Response.genPostbackButton(
-                "Show Photos",
-                "LOCATION_GALLERY"
-              ),
-              Response.genPostbackButton(
-                "Show Map",
-                "LOCATION_MAP"
-              ),
-            ]
-          );
-       
-        break;
 
       case "LOCATION_CHOSEN":
         response = [
@@ -148,7 +111,7 @@ module.exports = class Location {
             },
             {
               title:"Show Map",
-              payload: "LOCATION_GALLERY"
+              payload: "LOCATION_MAP"
             },
             {
               title:"Nearby places",
@@ -172,7 +135,7 @@ module.exports = class Location {
             },
             {
               title:"Show Map",
-              payload: "LOCATION_GALLERY"
+              payload: "LOCATION_MAP"
             },
             {
               title:"Nearby places",
@@ -189,7 +152,7 @@ module.exports = class Location {
         case "LOCATION_MAP":
         response =[
           //TODO: Replace this for a Photo Gallery
-          Response.genText("This is a Map of the place"),
+          Response.genText("This is the Map of the place"),
           //Next steps
           Response.genQuickReply("What else can I help you with?", [
             {
@@ -231,6 +194,17 @@ module.exports = class Location {
 
         ];
         break;
+
+        case "LOCATION_CHECK":
+        response = Response.genQuickReply("This flow is not ready yet", [
+            {
+              //TODO: This address needs to come from the device.
+              title:"Start all over again",
+              payload: "LOCATION_REVIEW"
+            }
+          ]);
+        break;
+
 
         default : response = [ 
           Response.genQuickReply("Available information", [
