@@ -1,0 +1,18 @@
+# Sample Response
+
+APP: `https://wit.ai/v2/apps/270129564344507/`
+
+_Input:_
+
+Is theme-park accessible for visually impaired?
+
+_Response:_
+```json
+{"text":"Is theme-park accessible for visually impaired?","intents":[\{"id":"622263308645974","name":"request_accessibility_info","confidence":1\}],"entities":\{"wit_disability:wit_disability":[\{"id":"705172783635479","name":"wit_disability","role":"wit_disability","start":29,"end":47,"body":"visually impaired?","confidence":0.9031,"entities":[],"suggested":true,"value":"visually impaired?","type":"value"\}],"wit$location:location":[\{"id":"257567208661149","name":"wit$location","role":"location","start":3,"end":13,"body":"theme-park","confidence":0.705,"entities":[],"suggested":true,"value":"theme-park","type":"value"\}]\},"traits":\{\}\}}
+```
+
+##### Conversation 1
+![Test Image 3](Conversation_1.png)
+
+##### Conversation 2
+![Test Image 3](Conversation_2.png)
