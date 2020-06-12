@@ -12,7 +12,8 @@ const ENV_VARS = [
   "APP_SECRET",
   "VERIFY_TOKEN",
   "APP_URL",
-  "SHOP_URL"
+  "SHOP_URL",
+  "WIT_TOKEN"
 ];
 
 module.exports = {
@@ -26,6 +27,8 @@ module.exports = {
   pageAccesToken: process.env.PAGE_ACCESS_TOKEN,
   appSecret: process.env.APP_SECRET,
   verifyToken: process.env.VERIFY_TOKEN,
+  // WIT Token
+  witToken: process.env.WIT_TOKEN,
 
   // URL of your app domain
   appUrl: process.env.APP_URL,

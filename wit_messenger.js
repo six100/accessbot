@@ -12,7 +12,7 @@
 //
 // 1. npm install body-parser express node-fetch
 // 2. Download and install ngrok from https://ngrok.com/download
-// 3. ./ngrok http 8445
+// 3. ./ngrok http 80
 // 4. WIT_TOKEN=your_access_token FB_APP_SECRET=your_app_secret FB_PAGE_TOKEN=your_page_token node examples/messenger.js
 // 5. Subscribe your page to the Webhooks using verify_token and `https://<your_ngrok_io>/webhook` as callback URL.
 // 6. Talk to your bot on Messenger!
@@ -21,6 +21,8 @@ const bodyParser = require('body-parser');
 const crypto = require('crypto');
 const express = require('express');
 const fetch = require('node-fetch');
+
+config = require("./services/config");
 
 let Wit = null;
 let log = null;
@@ -34,16 +36,16 @@ try {
 }
 
 // Webserver parameter
-const PORT = process.env.PORT || 8445;
+const PORT = process.env.PORT || config.port;
 
 // Wit.ai parameters
-const WIT_TOKEN = process.env.WIT_TOKEN;
+const WIT_TOKEN = process.env.WIT_TOKEN || config.witToken;
 
 // Messenger API parameters
-const FB_PAGE_TOKEN = process.env.FB_PAGE_TOKEN;
-if (!FB_PAGE_TOKEN) { throw new Error('missing FB_PAGE_TOKEN') }
-const FB_APP_SECRET = process.env.FB_APP_SECRET;
-if (!FB_APP_SECRET) { throw new Error('missing FB_APP_SECRET') }
+const FB_PAGE_TOKEN = process.env.FB_PAGE_TOKEN || config.pageAccessToken;
+if (!FB_PAGE_TOKEN) { throw new Error('missing PAGE_ACCESS_TOKEN') }
+const FB_APP_SECRET = process.env.FB_APP_SECRET || config.appSecret;
+if (!FB_APP_SECRET) { throw new Error('missing APP_SECRET') }
 
 let FB_VERIFY_TOKEN = null;
 crypto.randomBytes(8, (err, buff) => {
