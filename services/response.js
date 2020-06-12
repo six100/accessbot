@@ -62,6 +62,115 @@ module.exports = class Response {
     return response;
   }
 
+  static genImageTemplateTEST(image) {
+    let response = {
+      attachment: {
+        type: "template",
+        payload: {
+          template_type: "media",
+          elements: [
+            //WORKS1
+            // {
+            //   title: title,
+            //   subtitle: subtitle,
+            //   image_url: image
+            // },
+            //WORKS2
+            {
+              media_type:"image",
+              attachment_id: image,
+              
+            },
+            //WORKS3
+            // {
+            //   media_type:"image",
+            //   url: image
+            // }
+            
+          ]
+        }
+      }
+    };
+
+    return response;
+  }
+
+  static genImageById(image) {
+    let response = {
+      attachment: {
+        type: "template",
+        payload: {
+          template_type: "media",
+          elements: [
+            {
+              media_type:"image",
+              attachment_id: image
+            }
+          ]
+        }
+      }
+    };
+
+    return response;
+  }
+
+  static genImageGallery(type,images) {
+    let response = {
+      attachment: {
+        type: "template",
+        payload: {
+          template_type: type,
+          elements: images
+        }
+      }
+    };
+
+    return response;
+  }
+
+  static genImageTemplateById(image_id, buttons) {
+    let response = {
+      attachment: {
+        type: "template",
+        payload: {
+          template_type: "media",
+          elements: [
+            {
+              media_type:"image",
+              attachment_id: image_id,
+              buttons: buttons
+            }
+          ]
+        }
+      }
+    };
+
+    return response;
+  }
+
+  static genGalleryTemplate(image_url, title, subtitle = "") {
+    let response = {
+      attachment: {
+        type: "template",
+        payload: {
+          template_type: "generic",
+          elements: [
+            //WORKS1
+            {
+              title: title,
+              subtitle: subtitle,
+              image_url: image_url
+            },
+           
+          ]
+        }
+      }
+    };
+
+    return response;
+  }
+
+
   static genButtonTemplate(title, buttons) {
     let response = {
       attachment: {
@@ -132,7 +241,11 @@ module.exports = class Response {
       {
         title: i18n.__("menu.check"),
         payload: "LOCATION_CHECK"
-      }
+      },
+      // {
+      //   title: "Show image",
+      //   payload: "LOCATION_IMAGE"
+      // },
       // ,
       // {
       //   title: "suggestion v2.3",

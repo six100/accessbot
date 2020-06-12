@@ -26,10 +26,10 @@ module.exports = class Location {
             {
               //TODO: This address needs to come from the device.
               title:"122 Broadway Ave.",
-              payload: "LOCATION_SEARCH"
+              payload: "LOCATION_NEARBY"
             },
             {
-              title:"No, it's not",
+              title:"No, is different",
               payload: "LOCATION_UNKNOWN"
             }
           ]);
@@ -70,30 +70,84 @@ module.exports = class Location {
           Response.genText("There are 2 nearby accessible places"),
           Response.genQuickReply("Please choose one", [
             {
-              //TODO: This address needs to come directly from the device.
-              title:"Thai Bistro",
+              title:`Joe's Dinner`,
               payload: "LOCATION_CHOSEN"
             },
             {
-              title:"Happy Fries",
+              title:"Thai Bistro",
               payload: "LOCATION_CHOSEN"
             }
+            
           ])
         ];
         break;
 
-      case "LOCATION_CHOSEN":
+      case "LOCATION_IMAGE_TEST":
+        response = [
+          Response.genText("Restroom photos"),
+
+          //WORKS 1
+          // Response.genImageTemplate(
+          //   `${config.shopUrl}/images/demo/${i18n.__("demo.image")}`,
+          //   i18n.__("demo.name"),
+          //   i18n.__("demo.description")
+          // ),
+
+          //WORKS 2
+          Response.genImageTemplate(
+            `1664694220378585`
+          ),
+
+          //WORKS 3
+          // Response.genImageTemplate(
+          //   `${config.shopUrl}/images/demo/${i18n.__("demo.image")}`,
+          // )
+          
+          Response.genGalleryTemplate(
+            `${config.shopUrl}/images/demo/${i18n.__("demo.image")}`,
+            i18n.__("demo.name"),
+            i18n.__("demo.description")
+          ),
+
+        ];
+        break;
+
+
+      case "LOCATION_IMAGE":
         response = [
           Response.genText(
             i18n.__("leadgen.promo", {
               userFirstName: this.user.firstName
             })
           ),
+          Response.genImageById(`1664694220378585`),
+          Response.genImageById(`187406175933687`),
+          Response.genImageById(`285796509456205`),
+
+          Response.genImageTemplateById(
+            `1664694220378585`,
+            [Response.genPostbackButton(i18n.__("location.showAmenities"), "LOCATION_AMENITIES"),
+            Response.genPostbackButton("Directions", "LOCATION_MAP")]
+          )
+        ];
+        break;
+
+
+      case "LOCATION_CHOSEN":
+        response = [
+          // Response.genText(
+          //   i18n.__("leadgen.promo", {
+          //     userFirstName: this.user.firstName
+          //   })
+          // ),
           Response.genGenericTemplate(
             `${config.shopUrl}/images/demo/${i18n.__("demo.image")}`,
             i18n.__("demo.name"),
             i18n.__("demo.description"),
-            [Response.genPostbackButton(i18n.__("location.showAmenities"), "LOCATION_AMENITIES")]
+            [Response.genPostbackButton(i18n.__("location.showAmenities"), "LOCATION_AMENITIES"),
+            Response.genPostbackButton("Show Restroom", "LOCATION_AMENITIES"),
+            Response.genPostbackButton("Take me there!", "LOCATION_AMENITIES"),
+          ]
           )
         ];
         break;
@@ -103,14 +157,15 @@ module.exports = class Location {
         response = [
           Response.genText("This place has a ramp in the entrance"),
           Response.genText("Braile Menu is available"),
+          Response.genText("Restroom is wheelchair accessible"),
           //Next steps
           Response.genQuickReply("Please choose one", [
             {
-              title:"Show Photos",
+              title:"Show Restroom",
               payload: "LOCATION_GALLERY"
             },
             {
-              title:"Show Map",
+              title:"Directions",
               payload: "LOCATION_MAP"
             },
             {
@@ -125,8 +180,10 @@ module.exports = class Location {
 
       case "LOCATION_GALLERY":
         response =[
-          //TODO: Replace this for a Photo Gallery
-          Response.genText("These are photos of the place"),
+          //TODO: Replace For Place photos
+          Response.genImageById(`662033577684034`),
+          Response.genImageById(`257285178883552`),
+          
           //Next steps
           Response.genQuickReply("What else can I help you with?", [
             {
@@ -150,31 +207,26 @@ module.exports = class Location {
         break;
 
         case "LOCATION_MAP":
-        response =[
-          //TODO: Replace this for a Photo Gallery
-          Response.genText("This is the Map of the place"),
-          //Next steps
-          Response.genQuickReply("What else can I help you with?", [
-            {
-              title:"Show Accessibility",
-              payload: "LOCATION_AMENITIES"
-            },
-            {
-              title:"Show Photos",
-              payload: "LOCATION_AMENITIES"
-            },
-            {
-              title:"Nearby places",
-              payload: "LOCATION_NEARBY"
-            },
-          ])
+        response = [
+          // Response.genText(
+          //   i18n.__("leadgen.promo", {
+          //     userFirstName: this.user.firstName
+          //   })
+          // ),
+          Response.genGenericTemplate(
+            `${config.shopUrl}/images/demo/map1.png`,
+            i18n.__("demo.name"),
+            i18n.__("demo.description"),
+            [Response.genPostbackButton(i18n.__("location.showAmenities"), "LOCATION_AMENITIES"),
+            Response.genPostbackButton("Show Restroom", "LOCATION_AMENITIES")]
+          )
         ];
         break;
 
         case "LOCATION_NEW_QUESTION":
         //TODO: Replace this for a logic that captures and write the new Question in a DB
         response = [
-          Response.genText("What is your question for Happy Fries?"),
+          Response.genText("What is your question for Joe's Dinner?"),
           Response.genText("End of Demo"),
           //Next steps
           Response.genQuickReply("What else can I help you with?", [
