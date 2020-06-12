@@ -21,8 +21,7 @@ const bodyParser = require('body-parser');
 const crypto = require('crypto');
 const express = require('express');
 const fetch = require('node-fetch');
-
-config = require("./services/config");
+const config = require("./services/config");
 
 let Wit = null;
 let log = null;
@@ -41,8 +40,10 @@ const PORT = process.env.PORT || config.port;
 // Wit.ai parameters
 const WIT_TOKEN = process.env.WIT_TOKEN || config.witToken;
 
+console.log(config);
+
 // Messenger API parameters
-const FB_PAGE_TOKEN = process.env.FB_PAGE_TOKEN || config.pageAccessToken;
+const FB_PAGE_TOKEN = process.env.FB_PAGE_TOKEN || config.pageAccesToken;
 if (!FB_PAGE_TOKEN) { throw new Error('missing PAGE_ACCESS_TOKEN') }
 const FB_APP_SECRET = process.env.FB_APP_SECRET || config.appSecret;
 if (!FB_APP_SECRET) { throw new Error('missing APP_SECRET') }
