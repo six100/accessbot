@@ -4,7 +4,9 @@
 // Imports dependencies
 const Response = require("./response"),
   config = require("./config"),
-  i18n = require("../i18n.config");
+  i18n = require("../i18n.config"),
+  fetch = require("node-fetch");
+
 
 module.exports = class Location {
   constructor(user, webhookEvent) {
@@ -21,8 +23,51 @@ module.exports = class Location {
 
     switch (payload) {
 
-
       case "ACCESSIBILITY_REQUEST":
+
+          var url= 'https://ihluv6pklbfmfje2gnm2jq6uxm.appsync-api.us-west-2.amazonaws.com/graphql'
+          var qid = 9714;
+          var query = `query AllMessageConnection($qid: ID!){allMessageConnection(conversationId: $qid) {
+              messages {
+                id
+                conversationId
+                content
+                createdAt
+              }
+          }}`;
+
+
+            const getData = async url => {
+              try {
+                const response = await fetch(
+                  url, 
+                  {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      'x-api-key':'da2-g26zxjlo5be2rl2vtd3hnkkhva',
+                      //'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({
+                      query,
+                      //variables: { dice, sides },
+                      variables:{qid},
+                    })
+                  }
+                );
+                const json = await response.json();
+                console.log('API ANSWER',JSON.stringify(json));
+                return json;
+                
+              } catch (error) {
+                console.log('API ERROR',error);
+              }
+            };
+            
+            const apiResponse = getData(url);
+            
+
+        
         response = [
           Response.genText("I can help with that!"),
           Response.genQuickReply("Is 13 Elm Street your current location?", [
