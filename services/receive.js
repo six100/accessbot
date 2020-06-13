@@ -90,10 +90,12 @@ module.exports = class Receive {
     } else if (message.includes(i18n.__("care.help").toLowerCase())) {
       let care = new Care(this.user, this.webhookEvent);
       response = care.handlePayload("CARE_HELP");
+    } else if((nlpIntent ==='test_me' && nlpIntent.confidence > 0.8) || this.webhookEvent.message.text.includes("test")){
+      let location = new Location(this.user, this.webhookEvent);
+      response = location.handlePayload("LOCATION_TEST");
     } else if((nlpIntent ==='request_accessibility_info' && nlpIntent.confidence > 0.8) || this.webhookEvent.message.text.includes("access")){
       let location = new Location(this.user, this.webhookEvent);
       response = location.handlePayload("ACCESSIBILITY_REQUEST");
-      
     } else {
       response = [
         Response.genText(
@@ -307,10 +309,6 @@ module.exports = class Receive {
   }
 
   firstEntity(nlp, name) {
-    const fakepayload = {"entities":{"intent":[{"confidence":0.92372942949924,"value":"request_accessibility_info","_entity":"intent"}],"location":[{"suggested":true,"confidence":0.92615781362152,"value":"my area","type":"value","_entity":"location","_body":"my area","_start":28,"_end":35}]},"detected_locales":[{"locale":"en_XX","confidence":1}]}
-    
-    //Possible:
-    //intent, 
 
     return nlp && nlp.entities && nlp.entities[name] && nlp.entities[name][0];
 

@@ -23,7 +23,7 @@ module.exports = class Location {
 
     switch (payload) {
 
-      case "ACCESSIBILITY_REQUEST":
+      case "LOCATION_TEST":
 
           var url= 'https://ihluv6pklbfmfje2gnm2jq6uxm.appsync-api.us-west-2.amazonaws.com/graphql'
           var qid = 9714;
@@ -36,7 +36,13 @@ module.exports = class Location {
               }
           }}`;
 
+          console.log('query QUERY', JSON.stringify({
+            query,
+            //variables: { dice, sides },
+            variables:{qid},
+          }))
 
+            /// QUERY
             const getData = async url => {
               try {
                 const response = await fetch(
@@ -63,10 +69,77 @@ module.exports = class Location {
                 console.log('API ERROR',error);
               }
             };
-            
             const apiResponse = getData(url);
+
+
+          var mid = 9720;
+          var content = "hell yes";
+
+          // mutation CreateMessage {
+          //   createMessage(content: "Hello There" conversationId: "9714" createdAt: "This afternoon2" id: "messageOneId") {
+          //     content
+          //     createdAt
+          //   }
+          // }
+
+          // var mutation = `mutation CreateMessage(mid: ID!, $content: String ){
+          //   createMessage(id: "1234", content: "test here", conversationId: "9714", createdAt:"12345" ) {
+          //     content
+          //     createdAt
+          //   }
+          // }`;
+
+          var mutation = `mutation CreateMessage($mid: ID!, $content: String ){createMessage(id: $mid, content: $content, conversationId: "9714", createdAt:"12345" ) {
+                content
+                createdAt
+              }
+            }`;
+
+            console.log('mutation QUERY', JSON.stringify({
+              query: mutation,
+              variables:{mid, content},
+            }))
+
+            /// MUTATION
+            const writeData = async url => {
+              try {
+                const response = await fetch(
+                  url, 
+                  {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      'x-api-key':'da2-g26zxjlo5be2rl2vtd3hnkkhva',
+                      //'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({
+                      query: mutation,
+                      variables:{mid, content},
+                    })
+                  }
+                );
+                const json = await response.json();
+                console.log('WRITE API ANSWER',JSON.stringify(json));
+                return json;
+                
+              } catch (error) {
+                console.log('WRITE API ERROR',error);
+              }
+            };
+
+            writeData(url);
+
             
 
+        
+        response = [
+          Response.genText("test HERE"),
+        ]
+      break;
+        //TEST ENDS
+
+
+      case "ACCESSIBILITY_REQUEST":
         
         response = [
           Response.genText("I can help with that!"),
