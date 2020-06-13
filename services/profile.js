@@ -172,7 +172,7 @@ module.exports = class Profile {
         },
         {
         title: i18n.__("menu.review"),
-        payload: "REVIEW_LOCATION"
+        payload: "LOCATION_REVIEW"
       },
       {
         title: i18n.__("menu.review"),

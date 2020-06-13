@@ -65,13 +65,19 @@ module.exports = class Receive {
       `${this.webhookEvent.message.text} for ${this.user.psid}`
     );
 
-    // check greeting is here and is confident
+    
+
+    let nlpIntent = this.searchNLP(this.webhookEvent.message.nlp,'intent')
+    let nlpLocation = this.searchNLP(this.webhookEvent.message.nlp,'location')
     let greeting = this.firstEntity(this.webhookEvent.message.nlp, "greetings");
 
-    let message = this.webhookEvent.message.text.trim().toLowerCase();
+    this.showAllResponse(this.webhookEvent.message.nlp);
+   
 
+    let message = this.webhookEvent.message.text.trim().toLowerCase();
     let response;
 
+    //GREETINGS
     if (
       (greeting && greeting.confidence > 0.8) ||
       message.includes("start over")
@@ -84,6 +90,10 @@ module.exports = class Receive {
     } else if (message.includes(i18n.__("care.help").toLowerCase())) {
       let care = new Care(this.user, this.webhookEvent);
       response = care.handlePayload("CARE_HELP");
+    } else if((nlpIntent ==='request_accessibility_info' && nlpIntent.confidence > 0.8) || this.webhookEvent.message.text.includes("access")){
+      let location = new Location(this.user, this.webhookEvent);
+      response = location.handlePayload("ACCESSIBILITY_REQUEST");
+      
     } else {
       response = [
         Response.genText(
@@ -95,15 +105,19 @@ module.exports = class Receive {
         Response.genQuickReply(i18n.__("get_started.help"), [
           {
             title: i18n.__("menu.review"),
-            payload: "REVIEW_LOCATION"
+            payload: "LOCATION_REVIEW"
           },
           {
             title: i18n.__("menu.check"),
-            payload: "CHECK_LOCATION"
+            payload: "LOCATION_CHECK"
+          },
+          {
+            title:"X",
+            payload: "LOCATION_CLEAR"
           }
-          // ,
+          //,
           // {
-          //   title: "suggestion v2.0",
+          //   title: "suggestion",
           //   payload: "CURATION"
           // },
           // {
@@ -233,11 +247,11 @@ module.exports = class Receive {
     let response = Response.genQuickReply(welcomeMessage, [
       {
         title: i18n.__("menu.review"),
-        payload: "REVIEW_LOCATION"
+        payload: "LOCATION_REVIEW"
       },
       {
         title: i18n.__("menu.check"),
-        payload: "CHECK_LOCATION"
+        payload: "LOCATION_CHECK"
       }
       // ,
       // {
@@ -293,6 +307,28 @@ module.exports = class Receive {
   }
 
   firstEntity(nlp, name) {
+    const fakepayload = {"entities":{"intent":[{"confidence":0.92372942949924,"value":"request_accessibility_info","_entity":"intent"}],"location":[{"suggested":true,"confidence":0.92615781362152,"value":"my area","type":"value","_entity":"location","_body":"my area","_start":28,"_end":35}]},"detected_locales":[{"locale":"en_XX","confidence":1}]}
+    
+    //Possible:
+    //intent, 
+
     return nlp && nlp.entities && nlp.entities[name] && nlp.entities[name][0];
+
   }
+
+  searchNLP(nlp, name) {
+    if (nlp.entities[name]) {
+        console.log(`++++++++ this is '${name}': `);
+        console.log(nlp.entities[name][0]);
+        return nlp.entities[name][0];
+    } else {
+        console.log(`${name} entity not found `)
+    }
+  }
+
+  showAllResponse(nlp){
+    console.log(`/////////////////// ALL RESPONSE`);
+    console.log(nlp)
+  }
+
 };

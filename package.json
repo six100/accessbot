@@ -1,7 +1,7 @@
 {
-  "name": "original-coast-clothing",
+  "name": "Accessbot",
   "version": "1.0.0",
-  "description": "A sample app to show how to build a great Messenger experience!",
+  "description": "Facilitating Accessibility",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
@@ -14,6 +14,8 @@
     "ejs": "^2.6.2",
     "express": "^4.17.1",
     "i18n": "^0.8.3",
+    "node-fetch": "^2.6.0",
+    "node-wit": "^6.0.0",
     "path": "^0.12.7",
     "request": "^2.88.0"
   },
@@ -21,9 +23,9 @@
     "node": "^8.10.0 || ^10.13.0 || >=11.10.1"
   },
   "repository": {
-    "url": "https://github.com/fbsamples/original-coast-clothing"
+    "url": "https://github.com/six100/accessbot"
   },
-  "author": "Facebook",
+  "author": "six100",
   "license": "ISC",
   "keywords": [
     "messenger",

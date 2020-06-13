@@ -9,13 +9,13 @@
 		"suggestion": "suggestions v2",
 		"shop": "shop",
 		"start_over": "start over",
-    "startme": "Start Accessibility Bot",
-    "review": "Review accessibility",
-    "check": "Check accessibility"
+		"startme": "Start Accessibility Bot",
+		"review": "Review accessibility",
+		"check": "Check accessibility"
 	},
 	"get_started": {
-		"welcome": "Hi {{userFirstName}}! Welcome to the Accessibility Bot",
-		"guidance": "I can help you review the accessibility of a place",
+		"welcome": "Hi {{userFirstName}}! Welcome to Accessbot",
+		"guidance": "I can find accessible places in your area.",
 		"help": "What do you want to do?"
 	},
 	"leadgen": {
@@ -32,35 +32,37 @@
 		"confirm": "Can you confirm that you are located at",
 		"nearby": "These are the places close to you",
 		"userlocation": "Use my location",
-		"newlocation": "Different location"
+		"newlocation": "Different location",
+		"showAmenities": "Show Accessibility"
 	},
 	"curation": {
-		"prompt": "prompt question?",
-		"occasion": "occasion",
-		"price": "price",
-		"me": "me",
-		"someone": "Someone",
+		"prompt": "Are you looking for an outfit for yourself or someone else?",
+		"occasion": "Great! Let's get started. First, is there an occasion in mind?",
+		"price": "How much are you looking to spend?",
+		"me": "For me!",
+		"someone": "Someone else",
 		"work": "Work",
 		"dinner": "Dinner",
-		"interview": "Interview",
-		"sales": "sales",
-		"shop": "Shop",
-		"title": "title",
-		"subtitle": "subtitle",
-		"show": "show"
+		"party": "Party",
+		"sales": "Talk to sales",
+		"shop": "Shop this look",
+		"title": "Summer collection 2019",
+		"subtitle": "Featured outfit",
+		"show": "Another look",
+		"interview": "curation.interview"
 	},
 	"order": {
 		"prompt": "We'll be happy to help you. Select from the following",
-		"search": "Search",
-		"account": "account",
-		"dialog": "dialog",
-		"searching": "Searching...",
-		"number": "Sure, please write the id",
-		"status": "Status"
+		"search": "Search by order number",
+		"account": "Link my Account",
+		"dialog": "Account linking dialog",
+		"searching": "Searching for your last order...",
+		"number": "Sure, please write the order number",
+		"status": "Your order is on it’s way, expect to have it in 3 days."
 	},
 	"care": {
-		"prompt": "Prompt?",
-		"order": "Order",
+		"prompt": "To connect you with the right team please let me know what this is about?",
+		"order": "Order Inquiries",
 		"billing": "Billing Issues",
 		"other": "Other",
 		"issue": "Hi {{userFirstName}}, my name is {{agentFirstName}}, I'm here to assist you with any questions you might have about your {{topic}}.",
@@ -82,5 +84,10 @@
 	"fallback": {
 		"any": "Sorry, but I don’t recognize \"{{message}}\".",
 		"attachment": "Thanks for sending this attachment, we can connect you to an agent to review it or we can start over"
+	},
+	"demo":{
+		"name": "Joe Dinner, 124 Broadway St.",
+		"description": "American Dinner with traditional Menu, famous for their Cajun Fries.",
+		"image": "dinners.png"
 	}
 }
