@@ -21,6 +21,23 @@ module.exports = class Location {
 
     switch (payload) {
 
+
+      case "ACCESSIBILITY_REQUEST":
+        response = [
+          Response.genText("I can help with that!"),
+          Response.genQuickReply("Is 13 Elm Street your current location?", [
+            {
+              //TODO: This address needs to come from the device.
+              title:"Yes it is",
+              payload: "LOCATION_NEARBY"
+            },
+            {
+              title:"No, is different",
+              payload: "LOCATION_UNKNOWN"
+            }
+          ])];
+        break;
+
       case "LOCATION_REVIEW":
         response = Response.genQuickReply("Can you confirm this is your current location", [
             {
@@ -34,7 +51,6 @@ module.exports = class Location {
             }
           ]);
         break;
-     
 
       case "LOCATION_UNKNOWN":
         response = [
@@ -81,6 +97,7 @@ module.exports = class Location {
           ])
         ];
         break;
+        
 
       case "LOCATION_IMAGE_TEST":
         response = [
@@ -223,6 +240,17 @@ module.exports = class Location {
         ];
         break;
 
+        case "LOCATION_CLEAR":
+        response = [
+          Response.genGenericTemplate(
+            `${config.shopUrl}/images/demo/black.png`,
+            `-`,
+            `-`,
+            [Response.genPostbackButton("-", "LOCATION_AMENITIES"),]
+          )
+        ];
+        break;
+
         case "LOCATION_NEW_QUESTION":
         //TODO: Replace this for a logic that captures and write the new Question in a DB
         response = [
@@ -272,6 +300,10 @@ module.exports = class Location {
               title:"Photos",
               payload: "LOCATION_GALLERY"
             },
+            {
+              title:"X",
+              payload: "LOCATION_CLEAR"
+            }
           ])
         ]
       

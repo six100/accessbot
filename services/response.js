@@ -114,13 +114,16 @@ module.exports = class Response {
     return response;
   }
 
-  static genImageGallery(type,images) {
+  static genImageGallery(image) {
     let response = {
       attachment: {
         type: "template",
         payload: {
           template_type: type,
-          elements: images
+          elements: {
+            media_type:"image",
+            attachment_id: image
+          }
         }
       }
     };
