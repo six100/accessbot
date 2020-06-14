@@ -19,7 +19,9 @@ module.exports = class Location {
     let placeName;
     let placeDescription;
 
-    console.log(payload);
+    let message = this.webhookEvent.message.text.trim().toLowerCase();
+
+    console.log(this.webhookEvent);
 
     switch (payload) {
 
@@ -63,31 +65,19 @@ module.exports = class Location {
                 );
                 const json = await response.json();
                 console.log('API ANSWER',JSON.stringify(json));
+
                 return json;
                 
               } catch (error) {
-                console.log('API ERROR',error);
+                console.log(error);
               }
             };
             const apiResponse = getData(url);
 
 
           var mid = 9720;
-          var content = "hell yes";
+          var content = message;
 
-          // mutation CreateMessage {
-          //   createMessage(content: "Hello There" conversationId: "9714" createdAt: "This afternoon2" id: "messageOneId") {
-          //     content
-          //     createdAt
-          //   }
-          // }
-
-          // var mutation = `mutation CreateMessage(mid: ID!, $content: String ){
-          //   createMessage(id: "1234", content: "test here", conversationId: "9714", createdAt:"12345" ) {
-          //     content
-          //     createdAt
-          //   }
-          // }`;
 
           var mutation = `mutation CreateMessage($mid: ID!, $content: String ){createMessage(id: $mid, content: $content, conversationId: "9714", createdAt:"12345" ) {
                 content
@@ -100,7 +90,6 @@ module.exports = class Location {
               variables:{mid, content},
             }))
 
-            /// MUTATION
             const writeData = async url => {
               try {
                 const response = await fetch(
@@ -119,7 +108,8 @@ module.exports = class Location {
                   }
                 );
                 const json = await response.json();
-                console.log('WRITE API ANSWER',JSON.stringify(json));
+                console.log('WRITE API ANSWER',JSON.stringify(json))
+
                 return json;
                 
               } catch (error) {
