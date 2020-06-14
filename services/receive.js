@@ -92,7 +92,7 @@ module.exports = class Receive {
       response = care.handlePayload("CARE_HELP");
     } else if((nlpIntent ==='test_me' && nlpIntent.confidence > 0.8) || this.webhookEvent.message.text.includes("test")){
       let location = new Location(this.user, this.webhookEvent);
-      response = location.handlePayload("LOCATION_TEST");
+      response = location.handlePayload("LOCATION_TESTMAP");
     } else if((nlpIntent ==='request_accessibility_info' && nlpIntent.confidence > 0.8) || this.webhookEvent.message.text.includes("access")){
       let location = new Location(this.user, this.webhookEvent);
       response = location.handlePayload("ACCESSIBILITY_REQUEST");

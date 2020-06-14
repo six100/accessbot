@@ -13,7 +13,10 @@ const ENV_VARS = [
   "VERIFY_TOKEN",
   "APP_URL",
   "SHOP_URL",
-  "WIT_TOKEN"
+  "WIT_TOKEN",
+  "CRUD_URL",
+  "CRUD_KEY",
+  "GEO_KEY"
 ];
 
 module.exports = {
@@ -27,6 +30,10 @@ module.exports = {
   pageAccesToken: process.env.PAGE_ACCESS_TOKEN,
   appSecret: process.env.APP_SECRET,
   verifyToken: process.env.VERIFY_TOKEN,
+  crudUrl: process.env.CRUD_URL,
+  crudKey: process.env.CRUD_KEY,
+  geoKey: process.env.GEO_KEY,
+
   // WIT Token
   witToken: process.env.WIT_TOKEN,
 

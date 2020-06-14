@@ -24,10 +24,41 @@ module.exports = class Location {
     console.log(this.webhookEvent);
 
     switch (payload) {
+      
+      case "LOCATION_TESTMAP":
+        var userLocation = `Museum%20of%20Contemporary%20Art%20Australia`;
+        var locationUrl = `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${userLocation}&inputtype=textquery&fields=photos,formatted_address,name,rating,opening_hours,geometry&key=${config.geoKey}`;
+
+        /// QUERY
+        const getLocation = async url => {
+          try {
+            const response = await fetch(
+              url, 
+              {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                }
+              }
+            );
+            const json = await response.json();
+            console.log('GEO ANSWER',JSON.stringify(json));
+
+            return json;
+            
+          } catch (error) {
+            console.log(error);
+          }
+        };
+        getLocation(locationUrl);
+
+
+        break;
 
       case "LOCATION_TEST":
-
-          var url= 'https://ihluv6pklbfmfje2gnm2jq6uxm.appsync-api.us-west-2.amazonaws.com/graphql'
+          
+          var crudUrl = config.crudUrl;
+          var crudKey = config.crudKey;
           var qid = 9714;
           var query = `query AllMessageConnection($qid: ID!){allMessageConnection(conversationId: $qid) {
               messages {
@@ -53,7 +84,7 @@ module.exports = class Location {
                     method: 'POST',
                     headers: {
                       'Content-Type': 'application/json',
-                      'x-api-key':'da2-g26zxjlo5be2rl2vtd3hnkkhva',
+                      'x-api-key':crudKey,
                       //'Accept': 'application/json',
                     },
                     body: JSON.stringify({
@@ -72,7 +103,7 @@ module.exports = class Location {
                 console.log(error);
               }
             };
-            const apiResponse = getData(url);
+            const apiResponse = getData(crudUrl);
 
 
           var mid = 9720;
@@ -98,7 +129,7 @@ module.exports = class Location {
                     method: 'POST',
                     headers: {
                       'Content-Type': 'application/json',
-                      'x-api-key':'da2-g26zxjlo5be2rl2vtd3hnkkhva',
+                      'x-api-key':crudKey,
                       //'Accept': 'application/json',
                     },
                     body: JSON.stringify({
@@ -117,7 +148,7 @@ module.exports = class Location {
               }
             };
 
-            writeData(url);
+            writeData(crudUrl);
 
             
 
