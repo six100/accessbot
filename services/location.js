@@ -5,8 +5,10 @@
 const Response = require("./response"),
   config = require("./config"),
   i18n = require("../i18n.config"),
-  fetch = require("node-fetch");
-
+  fetch = require("node-fetch"),
+  encodeUrl = require('encodeurl'),
+  escapeHtml = require('escape-html')
+  ;
 
 module.exports = class Location {
   constructor(user, webhookEvent) {
@@ -204,6 +206,39 @@ module.exports = class Location {
         break;
 
       case "LOCATION_SEARCH":
+
+          // var userLocation2 = `Museum%20of%20Contemporary%20Art%20Australia`;
+          var userLocation = escapeHtml(message);
+          userLocation = encodeUrl(userLocation);
+
+          var locationUrl = `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${userLocation}&inputtype=textquery&fields=photos,formatted_address,name,rating,opening_hours,geometry&key=${config.geoKey}`;
+
+
+          console.log(userLocation);
+
+          /// QUERY
+          const getLocation2 = async url => {
+            try {
+              const response = await fetch(
+                url, 
+                {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  }
+                }
+              );
+              const json = await response.json();
+              console.log('GEO ANSWER',JSON.stringify(json));
+  
+              return json;
+              
+            } catch (error) {
+              console.log(error);
+            }
+          };
+          getLocation2(locationUrl);
+
         response = [
           // TODO: HERE IMPLEMENT LOGIC
           // 1. CONNECT TO YELP API, GET PLACES CLOSE TO ADDRESS PROVIDED
@@ -211,19 +246,7 @@ module.exports = class Location {
           // 3. ASSEMBLE NEW PAYLOAD ONLY WITH MATCHED RESULTS.
 
           //TODO: This should be an actual Payload
-          Response.genQuickReply("This is what I found", [
-            {
-              title:"Show Results",
-              payload: "LOCATION_NEARBY"
-            }
-          ])
-        ];
-        break;
-
-      case "LOCATION_NEARBY":
-        response = [
-          Response.genText("There are 2 nearby accessible places"),
-          Response.genQuickReply("Please choose one", [
+          Response.genQuickReply("This is what I found:", [
             {
               title:`Joe's Dinner`,
               payload: "LOCATION_CHOSEN"
@@ -232,7 +255,6 @@ module.exports = class Location {
               title:"Thai Bistro",
               payload: "LOCATION_CHOSEN"
             }
-            
           ])
         ];
         break;

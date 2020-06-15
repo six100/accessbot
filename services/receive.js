@@ -92,11 +92,21 @@ module.exports = class Receive {
       response = care.handlePayload("CARE_HELP");
     } else if((nlpIntent ==='test_me' && nlpIntent.confidence > 0.8) || this.webhookEvent.message.text.includes("test")){
       let location = new Location(this.user, this.webhookEvent);
+      //THE PAYLOAD TO TEST
       response = location.handlePayload("LOCATION_TESTMAP");
     } else if((nlpIntent ==='request_accessibility_info' && nlpIntent.confidence > 0.8) || this.webhookEvent.message.text.includes("access")){
       let location = new Location(this.user, this.webhookEvent);
       response = location.handlePayload("ACCESSIBILITY_REQUEST");
-    } else {
+    } else if((nlpIntent ==='declare_location' && nlpIntent.confidence > 0.8) || this.webhookEvent.message.text.includes("loca")){
+      console.log('CODE:001')
+      let location = new Location(this.user, this.webhookEvent);
+      response = location.handlePayload("LOCATION_SEARCH");
+    }else if((nlpLocation.suggested && nlpLocation.confidence > 0.8)){
+      console.log('CODE:002')
+      let location = new Location(this.user, this.webhookEvent);
+      response = location.handlePayload("LOCATION_SEARCH");
+    }else {
+      console.log('CODE:010')
       response = [
         Response.genText(
           i18n.__("fallback.any", {
