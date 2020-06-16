@@ -7,7 +7,8 @@ const Response = require("./response"),
   i18n = require("../i18n.config"),
   fetch = require("node-fetch"),
   encodeUrl = require('encodeurl'),
-  escapeHtml = require('escape-html')
+  escapeHtml = require('escape-html'),
+  {Client, Status} = require("@googlemaps/google-maps-services-js");
   ;
 
 module.exports = class Location {
@@ -207,6 +208,51 @@ module.exports = class Location {
 
       case "LOCATION_SEARCH":
 
+          console.log("LOCATION_SEARCH HERE:")
+
+          var userLocation = escapeHtml(message);
+          userLocation = encodeUrl(userLocation);
+          var locationUrl = `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${userLocation}&inputtype=textquery&fields=photos,formatted_address,name,rating,opening_hours,geometry&key=${config.geoKey}`;
+          
+          var resultsAPI;
+          const client = new Client({});
+          
+          client
+            .placesNearby({
+              params: {
+                location: { lat: 37, lng: -122 },
+                radius: 500000,
+                key: config.geoKey,
+              },
+              timeout: 1000, // milliseconds
+            })
+            .then((r) => {
+              console.log("THEN:",r.data.results[3].name);
+              console.log(JSON.stringify(r.data.results))
+              resultsAPI= r.data.results;
+            })
+            .catch((e) => {
+              console.log("CATCH:",e);
+            });
+
+          response = [
+            Response.genQuickReply("This is what I found:", [
+              {
+                title: `1. ${resultsAPI ? resultsAPI.data.results[3].name : 'uno'}`,
+                payload: "LOCATION_CHOSEN"
+              },
+              {
+                title: `2. ${resultsAPI ? resultsAPI.data.results[4].name : 'dos'}`,
+                payload: "LOCATION_CHOSEN"
+              }
+            ])
+          ];
+        break;
+
+      case "LOCATION_SEARCH2":
+
+      
+
           // var userLocation2 = `Museum%20of%20Contemporary%20Art%20Australia`;
           var userLocation = escapeHtml(message);
           userLocation = encodeUrl(userLocation);
@@ -214,12 +260,12 @@ module.exports = class Location {
           var locationUrl = `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${userLocation}&inputtype=textquery&fields=photos,formatted_address,name,rating,opening_hours,geometry&key=${config.geoKey}`;
 
 
-          console.log(userLocation);
+          console.log('SENT TO PLACES:',locationUrl);
 
-          /// QUERY
+          /// QUERY TO PLACES API
           const getLocation2 = async url => {
             try {
-              const response = await fetch(
+              const apiResponse = await fetch(
                 url, 
                 {
                   method: 'POST',
@@ -228,35 +274,51 @@ module.exports = class Location {
                   }
                 }
               );
-              const json = await response.json();
-              console.log('GEO ANSWER',JSON.stringify(json));
-  
-              return json;
+              const json = await apiResponse.json();
+
+              console.log('RESPONSE:',json);
               
             } catch (error) {
               console.log(error);
+              return 'error';
+            } finally{
+
+
+              if(apiResponse){
+                response = [
+                 
+                  Response.genQuickReply("This is what I found:", [
+                    {
+                      title: json.candidates && json.candidates[0].formatted_address,
+                      payload: "LOCATION_CHOSEN"
+                    },
+                    {
+                      title:json.candidates && json.candidates[1] && json.candidates[1].formatted_address,
+                      payload: "LOCATION_CHOSEN"
+                    }
+                  ])
+                ];
+              }else{
+                response = [
+                  Response.genQuickReply("This is what I found:", [
+                    {
+                      title: 'Address 123',
+                      payload: "LOCATION_CHOSEN"
+                    },
+                    {
+                      title: 'Address 456',
+                      payload: "LOCATION_CHOSEN"
+                    }
+                  ])
+                ];
+              }
+              
+
             }
           };
+          
           getLocation2(locationUrl);
-
-        response = [
-          // TODO: HERE IMPLEMENT LOGIC
-          // 1. CONNECT TO YELP API, GET PLACES CLOSE TO ADDRESS PROVIDED
-          // 2. ATTEMPT TO MATCH RESULTS WITH ACCESS-BOT DB.
-          // 3. ASSEMBLE NEW PAYLOAD ONLY WITH MATCHED RESULTS.
-
-          //TODO: This should be an actual Payload
-          Response.genQuickReply("This is what I found:", [
-            {
-              title:`Joe's Dinner`,
-              payload: "LOCATION_CHOSEN"
-            },
-            {
-              title:"Thai Bistro",
-              payload: "LOCATION_CHOSEN"
-            }
-          ])
-        ];
+        
         break;
         
 

@@ -20,7 +20,7 @@ module.exports = class Receive {
   // call the appropriate handler function
   handleMessage() {
     let event = this.webhookEvent;
-
+    console.log('EVENT:',event);
     let responses;
 
     try {
@@ -32,6 +32,7 @@ module.exports = class Receive {
         } else if (message.attachments) {
           responses = this.handleAttachmentMessage();
         } else if (message.text) {
+          //Hit when its a user utterance
           responses = this.handleTextMessage();
         }
       } else if (event.postback) {
@@ -54,6 +55,7 @@ module.exports = class Receive {
         delay++;
       }
     } else {
+      console.log('thisss')
       this.sendMessage(responses);
     }
   }
@@ -65,13 +67,12 @@ module.exports = class Receive {
       `${this.webhookEvent.message.text} for ${this.user.psid}`
     );
 
-    
 
     let nlpIntent = this.searchNLP(this.webhookEvent.message.nlp,'intent')
     let nlpLocation = this.searchNLP(this.webhookEvent.message.nlp,'location')
     let greeting = this.firstEntity(this.webhookEvent.message.nlp, "greetings");
 
-    this.showAllResponse(this.webhookEvent.message.nlp);
+    //this.showAllResponse(this.webhookEvent.message.nlp);
    
 
     let message = this.webhookEvent.message.text.trim().toLowerCase();
@@ -287,6 +288,7 @@ module.exports = class Receive {
   }
 
   sendMessage(response, delay = 0) {
+    console.log("sendMessageHere:",response)
     // Check if there is delay in the response
     if ("delay" in response) {
       delay = response["delay"];
