@@ -73,77 +73,57 @@ module.exports = class Receive {
   
 
   // Handles messages events with text
-  handleTextMessage() {
-    console.log(
-      ">>>>hadleTextMessage() :78"
-    );
+  async handleTextMessage() {
 
     let nlpIntent = this.searchNLP(this.webhookEvent.message.nlp,'intent')
     let nlpLocation = this.searchNLP(this.webhookEvent.message.nlp,'location')
     let greeting = this.firstEntity(this.webhookEvent.message.nlp, "greetings");
-
-    //this.showAllResponse(this.webhookEvent.message.nlp);
-   
-
+  
     let message = this.webhookEvent.message.text.trim().toLowerCase();
     let response;
-
-
-    // async function foo(){
-    //   console.log('foo function here')
-    //   const client = new Client({});
-
-    //   var resultados = await client.placesNearby({
-    //     params: {
-    //       location: { lat: 37, lng: -122 },
-    //       radius: 500000,
-    //       key: config.geoKey,
-    //     },
-    //     timeout: 1000, // milliseconds
-    //   }).then((r) => {
-    //     let location = new Location(this.user, this.webhookEvent, r.data);
-    //     response = location.handlePayload("LOCATION_SEARCH");
-    //     console.log('LOCATION_SEARCH RESPONSE:',response);
-
-    //   })
-    //   .catch((e) => {
-    //     console.log("CATCH:",e);
-    //   });
-
-    //   console.log(resultados);
-
-    //   return resultados;
-    // }
 
     //GREETINGS
     if ((greeting && greeting.confidence > 0.8) || message.includes("start over")) {
       response = Response.genNuxMessage(this.user);
+      return response;
+
     } else if (Number(message)) {
       response = Order.handlePayload("ORDER_NUMBER");
+      return response;
+
     } else if (message.includes("#")) {
       response = Survey.handlePayload("CSAT_SUGGESTION");
+      return response;
+
     } else if (message.includes(i18n.__("care.help").toLowerCase())) {
       let care = new Care(this.user, this.webhookEvent);
       response = care.handlePayload("CARE_HELP");
+      return response;
+
     } else if((nlpIntent ==='test_me' && nlpIntent.confidence > 0.8) || this.webhookEvent.message.text.includes("test")){
       let location = new Location(this.user, this.webhookEvent);
       //THE PAYLOAD TO TEST
       response = location.handlePayload("LOCATION_TESTMAP");
+      return response;
+
     } else if((nlpIntent ==='request_accessibility_info' && nlpIntent.confidence > 0.8) || this.webhookEvent.message.text.includes("access")){
       let location = new Location(this.user, this.webhookEvent);
       response = location.handlePayload("ACCESSIBILITY_REQUEST");
       console.log('ACCESSIBILITY_REQUEST RESPONSE:',response);
+      return response;
 
     } else if((nlpIntent ==='declare_location' && nlpIntent.confidence > 0.8) || this.webhookEvent.message.text.includes("loca")){
       let location = new Location(this.user, this.webhookEvent);
       response = location.handlePayload("LOCATION_SEARCH");
+      return response;
+
     }else if((nlpLocation.suggested && nlpLocation.confidence > 0.8)){
       
-      // console.log('calling foo')
-      // foo();
+      console.log('0001');
 
       const client = new Client({});
-      client
+
+      const isSolved = await client
         .placesNearby({
           params: {
             location: { lat: 37, lng: -122 },
@@ -151,20 +131,33 @@ module.exports = class Receive {
             key: config.geoKey,
           },
           timeout: 1000, // milliseconds
-        })
-        .then((r) => {
+        }).then((r) => {
+      
           let location = new Location(this.user, this.webhookEvent, r.data);
-          response = location.handlePayload("LOCATION_SEARCH");
-          console.log('LOCATION_SEARCH RESPONSE:',response);
+          let responses = location.handlePayload("LOCATION_SEARCH");
+          console.log('LOCATION_SEARCH RESPONSE:',responses);
 
-        })
-        .catch((e) => {
-          console.log("CATCH:",e);
+          if (Array.isArray(responses)) {
+            //console.log('ARRAY RESPONSE:',responses);
+            let delay = 0;
+            for (let response of responses) {
+              this.sendMessage(response, delay * 2000);
+              delay++;
+            }
+          } else {
+            //console.log('NOTARRAY RESPONSE:',responses);
+            this.sendMessage(responses);
+          }
+
+          //return response;
+
+        }).catch((e) => {
+             console.log("CATCH:",e);
         });
-       
+      
 
     }else {
-      //console.log('CODE:010')
+      
       response = [
         Response.genText(
           i18n.__("fallback.any", {
@@ -196,9 +189,10 @@ module.exports = class Receive {
           // }
         ])
       ];
+      return response;
     }
 
-    return response;
+    
   }
 
   // Handles mesage events with attachments
