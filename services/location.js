@@ -7,14 +7,14 @@ const Response = require("./response"),
   i18n = require("../i18n.config"),
   fetch = require("node-fetch"),
   encodeUrl = require('encodeurl'),
-  escapeHtml = require('escape-html'),
-  {Client, Status} = require("@googlemaps/google-maps-services-js");
+  escapeHtml = require('escape-html')
   ;
 
 module.exports = class Location {
-  constructor(user, webhookEvent) {
+  constructor(user, webhookEvent, geoData) {
     this.user = user;
     this.webhookEvent = webhookEvent;
+    this.geoData = geoData;
   }
 
   handlePayload(payload) {
@@ -180,6 +180,27 @@ module.exports = class Location {
           ])];
         break;
 
+      case "LOCATION_SEARCH":
+
+          console.log("LOCATION_SEARCH HERE:");
+          console.log(this.geoData.results[3].name);
+          console.log(this.geoData.results[4].name);
+
+          response = [
+            Response.genText("Ok this is what I found"),
+            Response.genQuickReply("Please choose one", [
+            {
+              //TODO: This address needs to come from the device.
+              title:`1. ${this.geoData.results[3].name}`,
+              payload: "LOCATION_CHOSEN"
+            },
+            {
+              title:`2. ${this.geoData.results[4].name}`,
+              payload: "LOCATION_CHOSEN"
+            }
+          ])];
+        break;
+
       case "LOCATION_REVIEW":
         response = Response.genQuickReply("Can you confirm this is your current location", [
             {
@@ -205,49 +226,7 @@ module.exports = class Location {
           ])
         ];
         break;
-
-      case "LOCATION_SEARCH":
-
-          console.log("LOCATION_SEARCH HERE:")
-
-          var userLocation = escapeHtml(message);
-          userLocation = encodeUrl(userLocation);
-          var locationUrl = `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${userLocation}&inputtype=textquery&fields=photos,formatted_address,name,rating,opening_hours,geometry&key=${config.geoKey}`;
-          
-          var resultsAPI;
-          const client = new Client({});
-          
-          client
-            .placesNearby({
-              params: {
-                location: { lat: 37, lng: -122 },
-                radius: 500000,
-                key: config.geoKey,
-              },
-              timeout: 1000, // milliseconds
-            })
-            .then((r) => {
-              console.log("THEN:",r.data.results[3].name);
-              console.log(JSON.stringify(r.data.results))
-              resultsAPI= r.data.results;
-            })
-            .catch((e) => {
-              console.log("CATCH:",e);
-            });
-
-          response = [
-            Response.genQuickReply("This is what I found:", [
-              {
-                title: `1. ${resultsAPI ? resultsAPI.data.results[3].name : 'uno'}`,
-                payload: "LOCATION_CHOSEN"
-              },
-              {
-                title: `2. ${resultsAPI ? resultsAPI.data.results[4].name : 'dos'}`,
-                payload: "LOCATION_CHOSEN"
-              }
-            ])
-          ];
-        break;
+        
 
       case "LOCATION_SEARCH2":
 
