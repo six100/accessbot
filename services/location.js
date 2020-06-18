@@ -27,36 +27,7 @@ module.exports = class Location {
     console.log(this.webhookEvent);
 
     switch (payload) {
-      
-      case "LOCATION_TESTMAP":
-        var userLocation = `Museum%20of%20Contemporary%20Art%20Australia`;
-        var locationUrl = `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${userLocation}&inputtype=textquery&fields=photos,formatted_address,name,rating,opening_hours,geometry&key=${config.geoKey}`;
 
-        /// QUERY
-        const getLocation = async url => {
-          try {
-            const response = await fetch(
-              url, 
-              {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json'
-                }
-              }
-            );
-            const json = await response.json();
-            console.log('GEO ANSWER',JSON.stringify(json));
-
-            return json;
-            
-          } catch (error) {
-            console.log(error);
-          }
-        };
-        getLocation(locationUrl);
-
-
-        break;
 
       case "LOCATION_TEST":
           
@@ -153,8 +124,6 @@ module.exports = class Location {
 
             writeData(crudUrl);
 
-            
-
         
         response = [
           Response.genText("test HERE"),
@@ -225,79 +194,6 @@ module.exports = class Location {
             }
           ])
         ];
-        break;
-        
-
-      case "LOCATION_SEARCH2":
-
-      
-
-          // var userLocation2 = `Museum%20of%20Contemporary%20Art%20Australia`;
-          var userLocation = escapeHtml(message);
-          userLocation = encodeUrl(userLocation);
-
-          var locationUrl = `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${userLocation}&inputtype=textquery&fields=photos,formatted_address,name,rating,opening_hours,geometry&key=${config.geoKey}`;
-
-
-          console.log('SENT TO PLACES:',locationUrl);
-
-          /// QUERY TO PLACES API
-          const getLocation2 = async url => {
-            try {
-              const apiResponse = await fetch(
-                url, 
-                {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json'
-                  }
-                }
-              );
-              const json = await apiResponse.json();
-
-              console.log('RESPONSE:',json);
-              
-            } catch (error) {
-              console.log(error);
-              return 'error';
-            } finally{
-
-
-              if(apiResponse){
-                response = [
-                 
-                  Response.genQuickReply("This is what I found:", [
-                    {
-                      title: json.candidates && json.candidates[0].formatted_address,
-                      payload: "LOCATION_CHOSEN"
-                    },
-                    {
-                      title:json.candidates && json.candidates[1] && json.candidates[1].formatted_address,
-                      payload: "LOCATION_CHOSEN"
-                    }
-                  ])
-                ];
-              }else{
-                response = [
-                  Response.genQuickReply("This is what I found:", [
-                    {
-                      title: 'Address 123',
-                      payload: "LOCATION_CHOSEN"
-                    },
-                    {
-                      title: 'Address 456',
-                      payload: "LOCATION_CHOSEN"
-                    }
-                  ])
-                ];
-              }
-              
-
-            }
-          };
-          
-          getLocation2(locationUrl);
-        
         break;
         
 
