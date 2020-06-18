@@ -149,25 +149,95 @@ module.exports = class Location {
           ])];
         break;
 
-      case "LOCATION_SEARCH":
+        case "LOCATION_SEARCH":
 
           console.log("LOCATION_SEARCH HERE:");
-          console.log(this.geoData.results[3].name);
-          console.log(this.geoData.results[4].name);
+           //console.log(this.geoData.results[0].name);
+
+           let apiResults = this.geoData.results
+
+           apiResults.map((key, index)=>{
+            console.log(this.geoData.results[index].name);
+           })
+           
+           console.log("Total Results:", apiResults.length);
+           
+           
+
+            function get(obj, prop) {
+              // return prop on obj
+              return obj[prop]
+            }
+            
+            function set(obj, prop, value) {
+              // set value for prop on obj
+              obj[prop] = value
+            }
+
+            const places =[];
+            const placesList =[];
+
+            //limiting to MAX 3 results
+           let i;
+           for(i = 0; i < 3 ; i++){
+             if(i <= (apiResults.length -1) ){
+              console.log(apiResults[i].name);
+              
+              places.push({"title": apiResults[i].name, "payload": "LOCATION_CHOSEN"})
+             
+             }
+            }
+
+            console.log("PLACES:",places);
+
+           
+          console.log(JSON.stringify(this.geoData.results));
+
+          let c;
+          response = [
+            Response.genText("Ok this is what I found"),
+            Response.genQuickReply("Please choose one", places ),
+            Response.genListTemplate(placesList)
+          ];
+
+          // response = [
+          //   Response.genText("Ok this is what I found"),
+          //   Response.genQuickReply("Please choose one", [ 
+          //   {
+          //     //TODO: This address needs to come from the device.
+          //     title:`1. ${this.geoData.results[0].name}`,
+          //     payload: "LOCATION_CHOSEN"
+          //   }
+          // ])
+          // ];
+        break;
+
+      case "LOCATION_BYCOORDS":
+
+          console.log("LOCATION_BYCOORDS HERE:");
+          console.log(this.geoData.results[0].name);
+          console.log(this.geoData.results[1].name);
+          console.log(this.geoData.results[2].name);
+          console.log(JSON.stringify(this.geoData.results));
 
           response = [
             Response.genText("Ok this is what I found"),
             Response.genQuickReply("Please choose one", [
             {
               //TODO: This address needs to come from the device.
-              title:`1. ${this.geoData.results[3].name}`,
+              title:`1. ${this.geoData.results[0].name}`,
               payload: "LOCATION_CHOSEN"
             },
             {
-              title:`2. ${this.geoData.results[4].name}`,
+              title:`2. ${this.geoData.results[1].name}`,
+              payload: "LOCATION_CHOSEN"
+            },
+            {
+              title:`3. ${this.geoData.results[2].name}`,
               payload: "LOCATION_CHOSEN"
             }
-          ])];
+          ])
+          ];
         break;
 
       case "LOCATION_REVIEW":

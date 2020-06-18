@@ -21,6 +21,21 @@ module.exports = class Response {
     return response;
   }
 
+  static genListTemplate(elements) {
+    let response = {
+      attachment: {
+        type: "template",
+        payload: {
+          template_type: "list",
+          top_element_style: "COMPACT",
+          elements: elements
+        }
+      }
+    };
+
+    return response;
+  }
+
   static genGenericTemplate(image_url, title, subtitle, buttons) {
     let response = {
       attachment: {

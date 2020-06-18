@@ -71,14 +71,14 @@ module.exports = class Receive {
     }
   }
 
-  async getNearbyPlaces(){
+  async getPlacebyCoords(){
     const client = new Client({});
 
-    const isSolved = await client
+    await client
       .placesNearby({
         params: {
           location: { lat: 37, lng: -122 },
-          radius: 5000,
+          radius: 10000,
           key: config.geoKey,
         },
         timeout: 1000, // milliseconds
@@ -86,7 +86,7 @@ module.exports = class Receive {
     
         let location = new Location(this.user, this.webhookEvent, r.data);
         let responses = location.handlePayload("LOCATION_SEARCH");
-        console.log('LOCATION_SEARCH RESPONSE:',responses);
+        console.log('RESPONSE INSIDE FUNC',responses);
 
         if (Array.isArray(responses)) {
           //console.log('ARRAY RESPONSE:',responses);
@@ -99,7 +99,47 @@ module.exports = class Receive {
           //console.log('NOTARRAY RESPONSE:',responses);
           this.sendMessage(responses);
         }
-        return;
+
+      }).catch((e) => {
+           console.log("CATCH:",e);
+      });
+  }
+
+  async getPlaceByText(message){
+    const client = new Client({});
+
+    console.log('+++ getPlaceByText()')
+
+      //.placesNearby
+      //.textSearch
+
+    await client
+      .textSearch({
+        params: {
+          //location: { lat: 37, lng: -122 },
+          radius: 10000,
+          query: message,
+          region: "US",
+          key: config.geoKey,
+        },
+        timeout: 1000, // milliseconds
+      }).then((r) => {
+    
+        let location = new Location(this.user, this.webhookEvent, r.data);
+        let responses = location.handlePayload("LOCATION_SEARCH");
+        console.log('RESPONSE INSIDE FUNC',responses);
+
+        if (Array.isArray(responses)) {
+          //console.log('ARRAY RESPONSE:',responses);
+          let delay = 0;
+          for (let response of responses) {
+            this.sendMessage(response, delay * 2000);
+            delay++;
+          }
+        } else {
+          //console.log('NOTARRAY RESPONSE:',responses);
+          this.sendMessage(responses);
+        }
 
       }).catch((e) => {
            console.log("CATCH:",e);
@@ -155,7 +195,8 @@ module.exports = class Receive {
     }else if((nlpLocation.suggested && nlpLocation.confidence > 0.8)){
       
       console.log('BY LOCATION');
-      this.getNearbyPlaces();
+      console.log()
+      this.getPlaceByText(message);
 
       response;
 
