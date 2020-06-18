@@ -4,12 +4,17 @@
 // Imports dependencies
 const Response = require("./response"),
   config = require("./config"),
-  i18n = require("../i18n.config");
+  i18n = require("../i18n.config"),
+  fetch = require("node-fetch"),
+  encodeUrl = require('encodeurl'),
+  escapeHtml = require('escape-html')
+  ;
 
 module.exports = class Location {
-  constructor(user, webhookEvent) {
+  constructor(user, webhookEvent, geoData) {
     this.user = user;
     this.webhookEvent = webhookEvent;
+    this.geoData = geoData;
   }
 
   handlePayload(payload) {
@@ -17,12 +22,118 @@ module.exports = class Location {
     let placeName;
     let placeDescription;
 
-    console.log(payload);
+    let message = this.webhookEvent.message.text.trim().toLowerCase();
+
+    console.log(this.webhookEvent);
 
     switch (payload) {
 
 
+      case "LOCATION_TEST":
+          
+          var crudUrl = config.crudUrl;
+          var crudKey = config.crudKey;
+          var qid = 9714;
+          var query = `query AllMessageConnection($qid: ID!){allMessageConnection(conversationId: $qid) {
+              messages {
+                id
+                conversationId
+                content
+                createdAt
+              }
+          }}`;
+
+          console.log('query QUERY', JSON.stringify({
+            query,
+            //variables: { dice, sides },
+            variables:{qid},
+          }))
+
+            /// QUERY
+            const getData = async url => {
+              try {
+                const response = await fetch(
+                  url, 
+                  {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      'x-api-key':crudKey,
+                      //'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({
+                      query,
+                      //variables: { dice, sides },
+                      variables:{qid},
+                    })
+                  }
+                );
+                const json = await response.json();
+                console.log('API ANSWER',JSON.stringify(json));
+
+                return json;
+                
+              } catch (error) {
+                console.log(error);
+              }
+            };
+            const apiResponse = getData(crudUrl);
+
+
+          var mid = 9720;
+          var content = message;
+
+
+          var mutation = `mutation CreateMessage($mid: ID!, $content: String ){createMessage(id: $mid, content: $content, conversationId: "9714", createdAt:"12345" ) {
+                content
+                createdAt
+              }
+            }`;
+
+            console.log('mutation QUERY', JSON.stringify({
+              query: mutation,
+              variables:{mid, content},
+            }))
+
+            const writeData = async url => {
+              try {
+                const response = await fetch(
+                  url, 
+                  {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      'x-api-key':crudKey,
+                      //'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({
+                      query: mutation,
+                      variables:{mid, content},
+                    })
+                  }
+                );
+                const json = await response.json();
+                console.log('WRITE API ANSWER',JSON.stringify(json))
+
+                return json;
+                
+              } catch (error) {
+                console.log('WRITE API ERROR',error);
+              }
+            };
+
+            writeData(crudUrl);
+
+        
+        response = [
+          Response.genText("test HERE"),
+        ]
+      break;
+        //TEST ENDS
+
+
       case "ACCESSIBILITY_REQUEST":
+        
         response = [
           Response.genText("I can help with that!"),
           Response.genQuickReply("Is 13 Elm Street your current location?", [
@@ -36,6 +147,97 @@ module.exports = class Location {
               payload: "LOCATION_UNKNOWN"
             }
           ])];
+        break;
+
+        case "LOCATION_SEARCH":
+
+          console.log("LOCATION_SEARCH HERE:");
+           //console.log(this.geoData.results[0].name);
+
+           let apiResults = this.geoData.results
+
+           apiResults.map((key, index)=>{
+            console.log(this.geoData.results[index].name);
+           })
+           
+           console.log("Total Results:", apiResults.length);
+           
+           
+
+            function get(obj, prop) {
+              // return prop on obj
+              return obj[prop]
+            }
+            
+            function set(obj, prop, value) {
+              // set value for prop on obj
+              obj[prop] = value
+            }
+
+            const places =[];
+            const placesList =[];
+
+            //limiting to MAX 3 results
+           let i;
+           for(i = 0; i < 3 ; i++){
+             if(i <= (apiResults.length -1) ){
+              console.log(apiResults[i].name);
+              
+              places.push({"title": apiResults[i].name, "payload": "LOCATION_CHOSEN"})
+             
+             }
+            }
+
+            console.log("PLACES:",places);
+
+           
+          console.log(JSON.stringify(this.geoData.results));
+
+          let c;
+          response = [
+            Response.genText("Ok this is what I found"),
+            Response.genQuickReply("Please choose one", places ),
+            Response.genListTemplate(placesList)
+          ];
+
+          // response = [
+          //   Response.genText("Ok this is what I found"),
+          //   Response.genQuickReply("Please choose one", [ 
+          //   {
+          //     //TODO: This address needs to come from the device.
+          //     title:`1. ${this.geoData.results[0].name}`,
+          //     payload: "LOCATION_CHOSEN"
+          //   }
+          // ])
+          // ];
+        break;
+
+      case "LOCATION_BYCOORDS":
+
+          console.log("LOCATION_BYCOORDS HERE:");
+          console.log(this.geoData.results[0].name);
+          console.log(this.geoData.results[1].name);
+          console.log(this.geoData.results[2].name);
+          console.log(JSON.stringify(this.geoData.results));
+
+          response = [
+            Response.genText("Ok this is what I found"),
+            Response.genQuickReply("Please choose one", [
+            {
+              //TODO: This address needs to come from the device.
+              title:`1. ${this.geoData.results[0].name}`,
+              payload: "LOCATION_CHOSEN"
+            },
+            {
+              title:`2. ${this.geoData.results[1].name}`,
+              payload: "LOCATION_CHOSEN"
+            },
+            {
+              title:`3. ${this.geoData.results[2].name}`,
+              payload: "LOCATION_CHOSEN"
+            }
+          ])
+          ];
         break;
 
       case "LOCATION_REVIEW":
@@ -60,40 +262,6 @@ module.exports = class Location {
               title:"123 Broadway Ave.",
               payload: "LOCATION_SEARCH"
             }
-          ])
-        ];
-        break;
-
-      case "LOCATION_SEARCH":
-        response = [
-          // TODO: HERE IMPLEMENT LOGIC
-          // 1. CONNECT TO YELP API, GET PLACES CLOSE TO ADDRESS PROVIDED
-          // 2. ATTEMPT TO MATCH RESULTS WITH ACCESS-BOT DB.
-          // 3. ASSEMBLE NEW PAYLOAD ONLY WITH MATCHED RESULTS.
-
-          //TODO: This should be an actual Payload
-          Response.genQuickReply("This is what I found", [
-            {
-              title:"Show Results",
-              payload: "LOCATION_NEARBY"
-            }
-          ])
-        ];
-        break;
-
-      case "LOCATION_NEARBY":
-        response = [
-          Response.genText("There are 2 nearby accessible places"),
-          Response.genQuickReply("Please choose one", [
-            {
-              title:`Joe's Dinner`,
-              payload: "LOCATION_CHOSEN"
-            },
-            {
-              title:"Thai Bistro",
-              payload: "LOCATION_CHOSEN"
-            }
-            
           ])
         ];
         break;

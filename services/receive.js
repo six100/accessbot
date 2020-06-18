@@ -8,7 +8,9 @@ const Curation = require("./curation"),
   Care = require("./care"),
   Survey = require("./survey"),
   GraphAPi = require("./graph-api"),
-  i18n = require("../i18n.config");
+  i18n = require("../i18n.config"),
+  config = require("./config"),
+  {Client, Status, asPromise} = require("@googlemaps/google-maps-services-js");
 
 module.exports = class Receive {
   constructor(user, webhookEvent) {
@@ -20,7 +22,7 @@ module.exports = class Receive {
   // call the appropriate handler function
   handleMessage() {
     let event = this.webhookEvent;
-
+    console.log('+1.EVENT:',event);
     let responses;
 
     try {
@@ -28,73 +30,178 @@ module.exports = class Receive {
         let message = event.message;
 
         if (message.quick_reply) {
+          console.log("++2.1 MESSAGE.QUICK_REPLY:", message.quick_reply);
           responses = this.handleQuickReply();
         } else if (message.attachments) {
+          console.log("++2.2 MESSAGE.ATTACHMENTS:", message.attachments);
           responses = this.handleAttachmentMessage();
         } else if (message.text) {
+          //Hit when its a user utterance
+          console.log("++2.3 MESSAGE.TEXT:", message.text);
           responses = this.handleTextMessage();
         }
       } else if (event.postback) {
+        console.log("++2.4 EVENT.POSTBACK:", event.postback);
         responses = this.handlePostback();
       } else if (event.referral) {
+        console.log("++2.5 EVENT.REFERRAL:", event.referral);
         responses = this.handleReferral();
       }
     } catch (error) {
-      console.error(error);
+
+      console.error("++2.10 ERROR:",error);
       responses = {
         text: `An error has occured: '${error}'. We have been notified and \
         will fix the issue shortly!`
       };
     }
 
+    console.log('++++++PREPARING TO SEND MESSAGE (:54)', responses)
+
     if (Array.isArray(responses)) {
+      console.log('ARRAY RESPONSE:',responses);
       let delay = 0;
       for (let response of responses) {
         this.sendMessage(response, delay * 2000);
         delay++;
       }
     } else {
+      console.log('NOTARRAY RESPONSE:',responses);
       this.sendMessage(responses);
     }
   }
 
+  async getPlacebyCoords(){
+    const client = new Client({});
+
+    await client
+      .placesNearby({
+        params: {
+          location: { lat: 37, lng: -122 },
+          radius: 10000,
+          key: config.geoKey,
+        },
+        timeout: 1000, // milliseconds
+      }).then((r) => {
+    
+        let location = new Location(this.user, this.webhookEvent, r.data);
+        let responses = location.handlePayload("LOCATION_SEARCH");
+        console.log('RESPONSE INSIDE FUNC',responses);
+
+        if (Array.isArray(responses)) {
+          //console.log('ARRAY RESPONSE:',responses);
+          let delay = 0;
+          for (let response of responses) {
+            this.sendMessage(response, delay * 2000);
+            delay++;
+          }
+        } else {
+          //console.log('NOTARRAY RESPONSE:',responses);
+          this.sendMessage(responses);
+        }
+
+      }).catch((e) => {
+           console.log("CATCH:",e);
+      });
+  }
+
+  async getPlaceByText(message){
+    const client = new Client({});
+
+    console.log('+++ getPlaceByText()')
+
+      //.placesNearby
+      //.textSearch
+
+    await client
+      .textSearch({
+        params: {
+          //location: { lat: 37, lng: -122 },
+          radius: 10000,
+          query: message,
+          region: "US",
+          key: config.geoKey,
+        },
+        timeout: 1000, // milliseconds
+      }).then((r) => {
+    
+        let location = new Location(this.user, this.webhookEvent, r.data);
+        let responses = location.handlePayload("LOCATION_SEARCH");
+        console.log('RESPONSE INSIDE FUNC',responses);
+
+        if (Array.isArray(responses)) {
+          //console.log('ARRAY RESPONSE:',responses);
+          let delay = 0;
+          for (let response of responses) {
+            this.sendMessage(response, delay * 2000);
+            delay++;
+          }
+        } else {
+          //console.log('NOTARRAY RESPONSE:',responses);
+          this.sendMessage(responses);
+        }
+
+      }).catch((e) => {
+           console.log("CATCH:",e);
+      });
+  }
+  
+
   // Handles messages events with text
   handleTextMessage() {
-    console.log(
-      "Received text:",
-      `${this.webhookEvent.message.text} for ${this.user.psid}`
-    );
-
-    
 
     let nlpIntent = this.searchNLP(this.webhookEvent.message.nlp,'intent')
     let nlpLocation = this.searchNLP(this.webhookEvent.message.nlp,'location')
     let greeting = this.firstEntity(this.webhookEvent.message.nlp, "greetings");
-
-    this.showAllResponse(this.webhookEvent.message.nlp);
-   
-
+  
     let message = this.webhookEvent.message.text.trim().toLowerCase();
     let response;
 
     //GREETINGS
-    if (
-      (greeting && greeting.confidence > 0.8) ||
-      message.includes("start over")
-    ) {
+    if ((greeting && greeting.confidence > 0.8) || message.includes("start over")) {
       response = Response.genNuxMessage(this.user);
+      
+
     } else if (Number(message)) {
       response = Order.handlePayload("ORDER_NUMBER");
+      
+
     } else if (message.includes("#")) {
       response = Survey.handlePayload("CSAT_SUGGESTION");
+      
+
     } else if (message.includes(i18n.__("care.help").toLowerCase())) {
       let care = new Care(this.user, this.webhookEvent);
       response = care.handlePayload("CARE_HELP");
+      
+
+    } else if((nlpIntent ==='test_me' && nlpIntent.confidence > 0.8) || this.webhookEvent.message.text.includes("test")){
+      let location = new Location(this.user, this.webhookEvent);
+      //THE PAYLOAD TO TEST
+      response = location.handlePayload("LOCATION_TESTMAP");
+      
+
     } else if((nlpIntent ==='request_accessibility_info' && nlpIntent.confidence > 0.8) || this.webhookEvent.message.text.includes("access")){
       let location = new Location(this.user, this.webhookEvent);
       response = location.handlePayload("ACCESSIBILITY_REQUEST");
+      console.log('ACCESSIBILITY_REQUEST RESPONSE:',response);
       
-    } else {
+
+    } else if((nlpIntent ==='declare_location' && nlpIntent.confidence > 0.8) || this.webhookEvent.message.text.includes("loca")){
+      let location = new Location(this.user, this.webhookEvent);
+      response = location.handlePayload("LOCATION_SEARCH");
+      
+
+    }else if((nlpLocation.suggested && nlpLocation.confidence > 0.8)){
+      
+      console.log('BY LOCATION');
+      console.log()
+      this.getPlaceByText(message);
+
+      response;
+
+    }else {
+      
       response = [
         Response.genText(
           i18n.__("fallback.any", {
@@ -126,6 +233,7 @@ module.exports = class Receive {
           // }
         ])
       ];
+      
     }
 
     return response;
@@ -184,7 +292,7 @@ module.exports = class Receive {
   }
 
   handlePayload(payload) {
-    console.log("Received Payload:", `${payload} for ${this.user.psid}`);
+    //console.log("Received Payload:", `${payload} for ${this.user.psid}`);
 
     // Log CTA event in FBA
     GraphAPi.callFBAEventsAPI(this.user.psid, payload);
@@ -275,6 +383,7 @@ module.exports = class Receive {
   }
 
   sendMessage(response, delay = 0) {
+    console.log("sendMessageHere:",response)
     // Check if there is delay in the response
     if ("delay" in response) {
       delay = response["delay"];
@@ -307,10 +416,6 @@ module.exports = class Receive {
   }
 
   firstEntity(nlp, name) {
-    const fakepayload = {"entities":{"intent":[{"confidence":0.92372942949924,"value":"request_accessibility_info","_entity":"intent"}],"location":[{"suggested":true,"confidence":0.92615781362152,"value":"my area","type":"value","_entity":"location","_body":"my area","_start":28,"_end":35}]},"detected_locales":[{"locale":"en_XX","confidence":1}]}
-    
-    //Possible:
-    //intent, 
 
     return nlp && nlp.entities && nlp.entities[name] && nlp.entities[name][0];
 
@@ -318,16 +423,16 @@ module.exports = class Receive {
 
   searchNLP(nlp, name) {
     if (nlp.entities[name]) {
-        console.log(`++++++++ this is '${name}': `);
+        console.log(`++++ '${name}': `);
         console.log(nlp.entities[name][0]);
         return nlp.entities[name][0];
     } else {
-        console.log(`${name} entity not found `)
+        console.log(`++++ ${name} (entity): not found `)
     }
   }
 
   showAllResponse(nlp){
-    console.log(`/////////////////// ALL RESPONSE`);
+    console.log(`++++ WIT RESPONSE:`);
     console.log(nlp)
   }
 
