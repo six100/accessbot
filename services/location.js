@@ -24,6 +24,12 @@ module.exports = class Location {
 
     let message = this.webhookEvent.message.text.trim().toLowerCase();
 
+    //Check Business G-Places type
+    let checkType = (a, toCheck)=>{
+      let f = a.find(e => e === toCheck);
+      return f == toCheck;
+    };
+
     console.log(this.webhookEvent);
 
     switch (payload) {
@@ -175,7 +181,6 @@ module.exports = class Location {
             }
 
             const places =[];
-            const placesList =[];
 
             //limiting to MAX 3 results
            let i;
@@ -183,22 +188,49 @@ module.exports = class Location {
              if(i <= (apiResults.length -1) ){
               console.log(apiResults[i].name);
               
-              places.push({"title": apiResults[i].name, "payload": "LOCATION_CHOSEN"})
+              places.push({"title": apiResults[i].formatted_address, "payload": "LOCATION_CHOSEN"})
              
              }
             }
+            places.push({"title": "Other", "payload": "LOCATION_UNKNOWN"})
 
             console.log("PLACES:",places);
 
            
           console.log(JSON.stringify(this.geoData.results));
 
-          let c;
+          //If oly one result is received:
+          if(checkType(apiResults[0].types, "street_address") ){
           response = [
-            Response.genText("Ok this is what I found"),
-            Response.genQuickReply("Please choose one", places ),
-            Response.genListTemplate(placesList)
-          ];
+            Response.genText(`Can you be more specific. What is the the name of the place located in this address?`),
+            ];
+          }else if(apiResults.length == 1){
+            response =[
+              Response.genText(`I found a place called "${apiResults[0].name}" at ${apiResults[0].formatted_address}`),
+              Response.genQuickReply(`Is this the place?`, [
+                {
+                  //TODO: This address needs to come from the device.
+                  title:"Yes it is",
+                  payload: "LOCATION_CHOSEN"
+                },
+                {
+                  title:"No, it's not",
+                  payload: "LOCATION_UNKNOWN"
+                }
+              ])
+            ]
+
+          }else if(apiResults.length >=2){
+            response = [
+              Response.genText(`Ok, Found various places under "${apiResults[0].name}"`),
+              Response.genQuickReply("Please choose one", places ),
+            ];
+          }else{
+            response = [
+              Response.genText(`I couldn't find anything`),
+              Response.genText(`Can you be more specific, include city name or zip code`),
+            ]
+          }
 
           // response = [
           //   Response.genText("Ok this is what I found"),
@@ -257,12 +289,8 @@ module.exports = class Location {
       case "LOCATION_UNKNOWN":
         response = [
           //TODO: This should be an utterance by the user, not a hardwired QuickReply
-          Response.genQuickReply("Where are you located now?", [
-            {
-              title:"123 Broadway Ave.",
-              payload: "LOCATION_SEARCH"
-            }
-          ])
+          Response.genText("Where are you located now?"),
+          Response.genText(`You can say something like "I'm at Lucky Strike by Times Square"`),
         ];
         break;
         
