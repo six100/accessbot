@@ -5,12 +5,16 @@ const i18n = require("../i18n.config");
 
 module.exports = class Response {
   static genQuickReply(text, quickReplies) {
+    
+    console.log("+++STEP3:",quickReplies);
+
     let response = {
       text: text,
       quick_replies: []
     };
 
     for (let quickReply of quickReplies) {
+      console.log("++++STEP4:",quickReply)
       response["quick_replies"].push({
         content_type: "text",
         title: quickReply["title"],
