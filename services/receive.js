@@ -156,8 +156,6 @@ module.exports = class Receive {
     }
 
     let parsedReady = await parseInfo(payloadToParse);
-    
-
 
     console.log('+++ recordByPlace()')
     console.log(parsedReady)
@@ -166,7 +164,7 @@ module.exports = class Receive {
       let placeId = parsedReady.id;
       let placeAddress = "23 elm street";
 
-        var mutation = `mutation CreateMessage($placeId: ID!, $placeName: String ){createMessage(id: $placeId, content: $placeName, conversationId: "5679", createdAt:"12345" ) {
+        var mutation = `mutation CreateMessage($placeId: ID!, $placeName: String ){createMessage(id: 1234, content: $placeName, conversationId: $placeId, createdAt:"12345" ) {
             content
             createdAt
           }
@@ -191,8 +189,8 @@ module.exports = class Receive {
 
         const json = await apiResponse.json();
 
-        let record = new Record(this.user, this.webhookEvent, json);
-        let responses = record.handlePayload("RECORD_LIST");
+        let location = new Location(this.user, this.webhookEvent);
+        let responses = location.handlePayload(payloadToParse);
 
         if (Array.isArray(responses)) {
           //console.log('ARRAY RESPONSE:',responses);

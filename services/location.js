@@ -22,8 +22,9 @@ module.exports = class Location {
 
     let action = payload;
     console.log("+++++STEP5:",payload);
+    
     let parsed;
-    // let parsed = JSON.parse(payload);
+   
 
     try {
       parsed = JSON.parse(payload); // this is how you parse a string into JSON 
@@ -31,6 +32,7 @@ module.exports = class Location {
       //action = parsed.payload;
 
     } catch (ex) {
+      console.log("++++++ERRORSTEP6:");
       console.error(ex);
     }
     
@@ -195,7 +197,9 @@ module.exports = class Location {
           }else if(apiResults.length == 1){
 
             //Passing Context to next message
-            let details= {payload:'RECORD_LIST', name: apiResults[0].name , address: apiResults[0].formatted_address ,id: apiResults[0].id };
+            let details= {payload:'RECORD_ANYTHING', name: apiResults[0].name , address: apiResults[0].formatted_address ,id: apiResults[0].id };
+            ////let details= {payload:'LOCATION_CHOSEN', name: apiResults[0].name , address: apiResults[0].formatted_address ,id: apiResults[0].id };
+
             details= JSON.stringify(details);
 
             response =[
@@ -224,7 +228,7 @@ module.exports = class Location {
                 console.log(apiResults[i].name);
 
                 //Passing Context to next message (Unfortunately we need to do it this way)
-                let details= {payload:'LOCATION_CHOSEN', name: apiResults[i].name , address: apiResults[i].formatted_address ,id: apiResults[i].id };
+                let details= {payload:'RECORD_ANYTHING', name: apiResults[i].name , address: apiResults[i].formatted_address ,id: apiResults[i].id };
                 console.log("+STEP1:", details );
                 details= JSON.stringify(details);
                 console.log("++STEP2:", details );
