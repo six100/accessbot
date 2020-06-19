@@ -49,6 +49,7 @@ module.exports = class Location {
     console.log(this.webhookEvent);
 
     switch (action) {
+      
 
       case "LOCATION_TEST":
           
@@ -105,6 +106,9 @@ module.exports = class Location {
           var content = message;
 
         /// SAVE DATA +++++++++++++++++++++++++++++++++++++++++++
+
+            
+
 
           var mutation = `mutation CreateMessage($xid: ID!, $content: String ){createMessage(id: $xid, content: $content, conversationId: "9714", createdAt:"12345" ) {
                 content
@@ -191,9 +195,7 @@ module.exports = class Location {
           }else if(apiResults.length == 1){
 
             //Passing Context to next message
-            //let details= {payload:'LOCATION_CHOSEN', name: apiResults[0].name , address: apiResults[0].formatted_address ,id: apiResults[0].id };
             let details= {payload:'RECORD_LIST', name: apiResults[0].name , address: apiResults[0].formatted_address ,id: apiResults[0].id };
-
             details= JSON.stringify(details);
 
             response =[

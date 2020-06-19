@@ -147,12 +147,23 @@ module.exports = class Receive {
       });
   }
   
-  async recordByPlace(){
+  async recordByPlace(payloadToParse){
+
+    let parseInfo = function(payload){
+      let parsed = JSON.parse(payload); // this is how you parse a string into JSON 
+      console.log("++++++STEP6B:",parsed);
+      return parsed;
+    }
+
+    let parsedReady = await parseInfo(payloadToParse);
+    
+
 
     console.log('+++ recordByPlace()')
+    console.log(parsedReady)
 
-      let placeName = "qwerty";
-      let placeId = "q123456";
+      let placeName = parsedReady.name;
+      let placeId = parsedReady.id;
       let placeAddress = "23 elm street";
 
         var mutation = `mutation CreateMessage($placeId: ID!, $placeName: String ){createMessage(id: $placeId, content: $placeName, conversationId: "5679", createdAt:"12345" ) {
@@ -195,7 +206,7 @@ module.exports = class Receive {
           this.sendMessage(responses);
         }
 
-        
+
 
         console.log('WRITE API ANSWER',JSON.stringify(json))
         return json;
@@ -237,6 +248,10 @@ module.exports = class Receive {
       
 
     } else if((nlpIntent ==='test_me' && nlpIntent.confidence > 0.8) || this.webhookEvent.message.text.includes("test")){
+      //THIS CANT BE THE PLACE FOR THIS, THE DIFFERENCE WITH THE PLACES API
+      //IS THAT AT THIS POINT WE ARE CARRYING A WELL ESTABLISHED PLACE ID
+      //WE NEED TO HANDLE PAYLOAD, NOT OPEN MESSAGES
+      //THIS WAS MOVED TO LINE 385
       console.log('+++TEST ME');
       this.recordByPlace();
 
@@ -250,6 +265,7 @@ module.exports = class Receive {
       
 
     } else if((nlpIntent ==='declare_location' && nlpIntent.confidence > 0.8) || this.webhookEvent.message.text.includes("loca")){
+      console.log('BY DECLARED LOCATION');
       let location = new Location(this.user, this.webhookEvent);
       response = location.handlePayload("LOCATION_SEARCH");
       
@@ -374,8 +390,11 @@ module.exports = class Receive {
       let location = new Location(this.user, this.webhookEvent);
       response = location.handlePayload(payload);
     } else if (payload.includes("RECORD")) {
-      let record = new Record(this.user, this.webhookEvent);
-      response = record.handlePayload(payload);
+      // let record = new Record(this.user, this.webhookEvent);
+      // response = record.handlePayload(payload);
+      console.log('+:38+');
+      this.recordByPlace(payload);
+
     } else if (payload.includes("CARE")) {
       let care = new Care(this.user, this.webhookEvent);
       response = care.handlePayload(payload);

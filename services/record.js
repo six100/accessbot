@@ -48,6 +48,13 @@ module.exports = class Record {
 
     switch (payload) {
 
+      case "RECORD_SAVED":
+          response = [
+            Response.genText("Gotcha!"),
+            Response.genText("Want to continue reviewing La Superior?"),
+          ]
+      break;
+
       case "RECORD_LIST":
 
           console.log("++++RECORD_LIST");
