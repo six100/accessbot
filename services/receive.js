@@ -59,14 +59,14 @@ module.exports = class Receive {
     console.log('++++++PREPARING TO SEND MESSAGE (:54)', responses)
 
     if (Array.isArray(responses)) {
-      console.log('ARRAY RESPONSE:',responses);
+      
       let delay = 0;
       for (let response of responses) {
         this.sendMessage(response, delay * 2000);
         delay++;
       }
     } else {
-      console.log('NOTARRAY RESPONSE:',responses);
+      
       this.sendMessage(responses);
     }
   }
@@ -127,7 +127,6 @@ module.exports = class Receive {
     
         let location = new Location(this.user, this.webhookEvent, r.data);
         let responses = location.handlePayload("LOCATION_SEARCH");
-        console.log('RESPONSE INSIDE FUNC',responses);
 
         if (Array.isArray(responses)) {
           //console.log('ARRAY RESPONSE:',responses);
@@ -149,6 +148,8 @@ module.exports = class Receive {
 
   // Handles messages events with text
   handleTextMessage() {
+
+    console.log('+++++++CHECKME:',this.webhookEvent);
 
     let nlpIntent = this.searchNLP(this.webhookEvent.message.nlp,'intent')
     let nlpLocation = this.searchNLP(this.webhookEvent.message.nlp,'location')

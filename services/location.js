@@ -10,6 +10,7 @@ const Response = require("./response"),
   escapeHtml = require('escape-html')
   ;
 
+
 module.exports = class Location {
   constructor(user, webhookEvent, geoData) {
     this.user = user;
@@ -18,6 +19,21 @@ module.exports = class Location {
   }
 
   handlePayload(payload) {
+
+    let action = payload;
+    console.log("+++++STEP5:",payload);
+    let parsed;
+    // let parsed = JSON.parse(payload);
+
+    try {
+      parsed = JSON.parse(payload); // this is how you parse a string into JSON 
+      console.log("++++++STEP6:",parsed);
+      //action = parsed.payload;
+
+    } catch (ex) {
+      console.error(ex);
+    }
+    
     let response;
     let placeName;
     let placeDescription;
@@ -32,7 +48,7 @@ module.exports = class Location {
 
     console.log(this.webhookEvent);
 
-    switch (payload) {
+    switch (action) {
 
 
       case "LOCATION_TEST":
@@ -86,11 +102,11 @@ module.exports = class Location {
             const apiResponse = getData(crudUrl);
 
 
-          var mid = 9720;
+          var xid = 9720;
           var content = message;
 
 
-          var mutation = `mutation CreateMessage($mid: ID!, $content: String ){createMessage(id: $mid, content: $content, conversationId: "9714", createdAt:"12345" ) {
+          var mutation = `mutation CreateMessage($xid: ID!, $content: String ){createMessage(id: $xid, content: $content, conversationId: "9714", createdAt:"12345" ) {
                 content
                 createdAt
               }
@@ -98,7 +114,7 @@ module.exports = class Location {
 
             console.log('mutation QUERY', JSON.stringify({
               query: mutation,
-              variables:{mid, content},
+              variables:{xid, content},
             }))
 
             const writeData = async url => {
@@ -114,7 +130,7 @@ module.exports = class Location {
                     },
                     body: JSON.stringify({
                       query: mutation,
-                      variables:{mid, content},
+                      variables:{xid, content},
                     })
                   }
                 );
@@ -156,62 +172,34 @@ module.exports = class Location {
         break;
 
         case "LOCATION_SEARCH":
-
-          console.log("LOCATION_SEARCH HERE:");
-           //console.log(this.geoData.results[0].name);
-
+          
            let apiResults = this.geoData.results
 
            apiResults.map((key, index)=>{
-            console.log(this.geoData.results[index].name);
+            console.log(`TOTAL RECEIVED (${apiResults.length})`,this.geoData.results[index].name);
            })
-           
-           console.log("Total Results:", apiResults.length);
-           
-           
+          
+          //console.log(JSON.stringify(this.geoData.results));
 
-            function get(obj, prop) {
-              // return prop on obj
-              return obj[prop]
-            }
-            
-            function set(obj, prop, value) {
-              // set value for prop on obj
-              obj[prop] = value
-            }
-
-            const places =[];
-
-            //limiting to MAX 3 results
-           let i;
-           for(i = 0; i < 3 ; i++){
-             if(i <= (apiResults.length -1) ){
-              console.log(apiResults[i].name);
-              
-              places.push({"title": apiResults[i].formatted_address, "payload": "LOCATION_CHOSEN"})
-             
-             }
-            }
-            places.push({"title": "Other", "payload": "LOCATION_UNKNOWN"})
-
-            console.log("PLACES:",places);
-
-           
-          console.log(JSON.stringify(this.geoData.results));
-
-          //If oly one result is received:
+          //IF IT'S A STREET 
           if(checkType(apiResults[0].types, "street_address") ){
           response = [
             Response.genText(`Can you be more specific. What is the the name of the place located in this address?`),
             ];
+
+          //IF 1 RESULT 
           }else if(apiResults.length == 1){
+
+            //Passing Context to next message
+            let details= {payload:'LOCATION_CHOSEN', name: apiResults[0].name , address: apiResults[0].formatted_address ,id: apiResults[0].id };
+            details= JSON.stringify(details);
+
             response =[
               Response.genText(`I found a place called "${apiResults[0].name}" at ${apiResults[0].formatted_address}`),
-              Response.genQuickReply(`Is this the place?`, [
+              Response.genQuickReply(`Can you confirm?`,[
                 {
-                  //TODO: This address needs to come from the device.
                   title:"Yes it is",
-                  payload: "LOCATION_CHOSEN"
+                  payload: details
                 },
                 {
                   title:"No, it's not",
@@ -220,10 +208,36 @@ module.exports = class Location {
               ])
             ]
 
+          //IF 2 OR MORE RESULTS 
           }else if(apiResults.length >=2){
+
+
+            const places =[];
+              //limiting to MAX 5 results
+            let i;
+            for(i = 0; i < 5 ; i++){
+              if(i <= (apiResults.length -1) ){
+                console.log(apiResults[i].name);
+
+                //Passing Context to next message (Unfortunately we need to do it this way)
+                let details= {payload:'LOCATION_CHOSEN', name: apiResults[i].name , address: apiResults[i].formatted_address ,id: apiResults[i].id };
+                console.log("+STEP1:", details );
+                details= JSON.stringify(details);
+                console.log("++STEP2:", details );
+
+                places.push({"title": apiResults[i].formatted_address, "payload": details}
+                )
+              }
+              }
+              places.push({"title": "Other", "payload": "LOCATION_UNKNOWN"})
+
+              console.log("+++STEP2.5:",places)
+
+              
+
             response = [
               Response.genText(`Ok, Found various places under "${apiResults[0].name}"`),
-              Response.genQuickReply("Please choose one", places ),
+              Response.genQuickReply("Please choose one", places),
             ];
           }else{
             response = [
@@ -231,17 +245,7 @@ module.exports = class Location {
               Response.genText(`Can you be more specific, include city name or zip code`),
             ]
           }
-
-          // response = [
-          //   Response.genText("Ok this is what I found"),
-          //   Response.genQuickReply("Please choose one", [ 
-          //   {
-          //     //TODO: This address needs to come from the device.
-          //     title:`1. ${this.geoData.results[0].name}`,
-          //     payload: "LOCATION_CHOSEN"
-          //   }
-          // ])
-          // ];
+          
         break;
 
       case "LOCATION_BYCOORDS":
@@ -347,16 +351,15 @@ module.exports = class Location {
 
 
       case "LOCATION_CHOSEN":
+        //1. Bring Selected info, 
+        //2. display it here
+        //3. Save it to DB
+
         response = [
-          // Response.genText(
-          //   i18n.__("leadgen.promo", {
-          //     userFirstName: this.user.firstName
-          //   })
-          // ),
           Response.genGenericTemplate(
             `${config.shopUrl}/images/demo/${i18n.__("demo.image")}`,
-            i18n.__("demo.name"),
-            i18n.__("demo.description"),
+            `${parsed.name ? parsed.name : 'Bonitaa Restaurant'}`,
+            `${parsed.description  ? parsed.description : '123 2nd Ave.'}`,
             [Response.genPostbackButton(i18n.__("location.showAmenities"), "LOCATION_AMENITIES"),
             Response.genPostbackButton("Show Restroom", "LOCATION_AMENITIES"),
             Response.genPostbackButton("Take me there!", "LOCATION_AMENITIES"),
@@ -480,28 +483,47 @@ module.exports = class Location {
             }
           ]);
         break;
+        
+        
+        default: 
+        if(parsed.name){response = [
+            Response.genGenericTemplate(
+              `${config.shopUrl}/images/demo/${i18n.__("demo.image")}`,
+              `${parsed.name ? parsed.name : 'Bonitaa Restaurant'}`,
+              `${parsed.address  ? parsed.address : '123 2nd Ave.'}`,
+              [Response.genPostbackButton(i18n.__("location.showAmenities"), "LOCATION_AMENITIES"),
+              Response.genPostbackButton("Show Restroom", "LOCATION_AMENITIES"),
+              Response.genPostbackButton("Take me there!", "LOCATION_AMENITIES"),
+            ]
+            )
+          ]
+        }else{
 
+          response = [ 
+            Response.genQuickReply("Available information", [
+              {
+                title:"General",
+                payload: "LOCATION_CHOSEN"
+              },
+              {
+                title:"Accessibility",
+                payload: "LOCATION_AMENITIES"
+              },
+              {
+                title:"Photos",
+                payload: "LOCATION_GALLERY"
+              },
+              {
+                title:"X",
+                payload: "LOCATION_CLEAR"
+              }
+            ])
+          ]
 
-        default : response = [ 
-          Response.genQuickReply("Available information", [
-            {
-              title:"General",
-              payload: "LOCATION_CHOSEN"
-            },
-            {
-              title:"Accessibility",
-              payload: "LOCATION_AMENITIES"
-            },
-            {
-              title:"Photos",
-              payload: "LOCATION_GALLERY"
-            },
-            {
-              title:"X",
-              payload: "LOCATION_CLEAR"
-            }
-          ])
-        ]
+        }
+        break;
+
+        
       
     }
 
