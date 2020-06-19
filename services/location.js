@@ -50,7 +50,6 @@ module.exports = class Location {
 
     switch (action) {
 
-
       case "LOCATION_TEST":
           
           var crudUrl = config.crudUrl;
@@ -71,7 +70,7 @@ module.exports = class Location {
             variables:{qid},
           }))
 
-            /// QUERY
+            /// QUERY DATA
             const getData = async url => {
               try {
                 const response = await fetch(
@@ -104,6 +103,10 @@ module.exports = class Location {
 
           var xid = 9720;
           var content = message;
+
+        /// SAVE DATA +++++++++++++++++++++++++++++++++++++++++++
+
+            
 
 
           var mutation = `mutation CreateMessage($xid: ID!, $content: String ){createMessage(id: $xid, content: $content, conversationId: "9714", createdAt:"12345" ) {
@@ -191,7 +194,9 @@ module.exports = class Location {
           }else if(apiResults.length == 1){
 
             //Passing Context to next message
-            let details= {payload:'LOCATION_CHOSEN', name: apiResults[0].name , address: apiResults[0].formatted_address ,id: apiResults[0].id };
+            //let details= {payload:'LOCATION_CHOSEN', name: apiResults[0].name , address: apiResults[0].formatted_address ,id: apiResults[0].id };
+            let details= {payload:'RECORD_SAVE', name: apiResults[0].name , address: apiResults[0].formatted_address ,id: apiResults[0].id };
+
             details= JSON.stringify(details);
 
             response =[
@@ -351,14 +356,14 @@ module.exports = class Location {
 
 
       case "LOCATION_CHOSEN":
-        //1. Bring Selected info, 
-        //2. display it here
+        //1. Bring Selected info, rEADY
+        //2. display it here READY
         //3. Save it to DB
 
         response = [
           Response.genGenericTemplate(
             `${config.shopUrl}/images/demo/${i18n.__("demo.image")}`,
-            `${parsed.name ? parsed.name : 'Bonitaa Restaurant'}`,
+            `${parsed.name ? parsed.name : 'Bonita Restaurant'}`,
             `${parsed.description  ? parsed.description : '123 2nd Ave.'}`,
             [Response.genPostbackButton(i18n.__("location.showAmenities"), "LOCATION_AMENITIES"),
             Response.genPostbackButton("Show Restroom", "LOCATION_AMENITIES"),

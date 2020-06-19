@@ -3,6 +3,7 @@
 
 const Curation = require("./curation"),
   Location = require("./location"),  
+  Record = require("./record"),  
   Order = require("./order"),
   Response = require("./response"),
   Care = require("./care"),
@@ -262,9 +263,9 @@ module.exports = class Receive {
     return response;
   }
 
-  // Handles mesage events with quick replies
+  // Handles message events with quick replies
   handleQuickReply() {
-    // Get the payload of the quick reply
+    // Get the payload from any quickReply and pass it as text.message
     let payload = this.webhookEvent.message.quick_reply.payload;
 
     return this.handlePayload(payload);
@@ -313,6 +314,9 @@ module.exports = class Receive {
     } else if (payload.includes("LOCATION")) {
       let location = new Location(this.user, this.webhookEvent);
       response = location.handlePayload(payload);
+    } else if (payload.includes("RECORD")) {
+      let record = new Record(this.user, this.webhookEvent);
+      response = record.handlePayload(payload);
     } else if (payload.includes("CARE")) {
       let care = new Care(this.user, this.webhookEvent);
       response = care.handlePayload(payload);
