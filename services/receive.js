@@ -11,7 +11,8 @@ const Curation = require("./curation"),
   GraphAPi = require("./graph-api"),
   i18n = require("../i18n.config"),
   config = require("./config"),
-  {Client, Status, asPromise} = require("@googlemaps/google-maps-services-js");
+  {Client, Status, asPromise} = require("@googlemaps/google-maps-services-js"),
+  fetch = require("node-fetch");
 
 module.exports = class Receive {
   constructor(user, webhookEvent) {
@@ -146,6 +147,64 @@ module.exports = class Receive {
       });
   }
   
+  async recordByPlace(){
+
+    console.log('+++ recordByPlace()')
+
+      let placeName = "qwerty";
+      let placeId = "q123456";
+      let placeAddress = "23 elm street";
+
+        var mutation = `mutation CreateMessage($placeId: ID!, $placeName: String ){createMessage(id: $placeId, content: $placeName, conversationId: "5679", createdAt:"12345" ) {
+            content
+            createdAt
+          }
+        }`;
+
+      try {
+        const apiResponse = await fetch(
+          config.crudUrl, 
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-api-key':config.crudKey,
+              //'Accept': 'application/json',
+            },
+            body: JSON.stringify({
+              query: mutation,
+              variables:{placeId, placeName},
+            })
+          }
+        );
+
+        const json = await apiResponse.json();
+
+        let record = new Record(this.user, this.webhookEvent, json);
+        let responses = record.handlePayload("RECORD_LIST");
+
+        if (Array.isArray(responses)) {
+          //console.log('ARRAY RESPONSE:',responses);
+          let delay = 0;
+          for (let response of responses) {
+            this.sendMessage(response, delay * 2000);
+            delay++;
+          }
+        } else {
+          //console.log('NOTARRAY RESPONSE:',responses);
+          this.sendMessage(responses);
+        }
+
+        
+
+        console.log('WRITE API ANSWER',JSON.stringify(json))
+        return json;
+        
+      } catch (error) {
+        console.log('WRITE API ERROR',error);
+      }
+   
+  }
 
   // Handles messages events with text
   handleTextMessage() {
@@ -178,9 +237,10 @@ module.exports = class Receive {
       
 
     } else if((nlpIntent ==='test_me' && nlpIntent.confidence > 0.8) || this.webhookEvent.message.text.includes("test")){
-      let location = new Location(this.user, this.webhookEvent);
-      //THE PAYLOAD TO TEST
-      response = location.handlePayload("LOCATION_TESTMAP");
+      console.log('+++TEST ME');
+      this.recordByPlace();
+
+      response;
       
 
     } else if((nlpIntent ==='request_accessibility_info' && nlpIntent.confidence > 0.8) || this.webhookEvent.message.text.includes("access")){
@@ -197,7 +257,6 @@ module.exports = class Receive {
     }else if((nlpLocation.suggested && nlpLocation.confidence > 0.8)){
       
       console.log('BY LOCATION');
-      console.log()
       this.getPlaceByText(message);
 
       response;

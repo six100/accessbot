@@ -9,42 +9,24 @@ const Response = require("./response"),
   
 
 module.exports = class Record {
-  constructor(user, webhookEvent, geoData) {
+  constructor(user, webhookEvent, placeData) {
     this.user = user;
     this.webhookEvent = webhookEvent;
-    this.geoData = geoData;
+    this.placeData = placeData;
   }
 
 
+  handlePayload(payload){
 
-  async handlePayload(payloadToParse){
-
+    console.log(this.placeData);
+    let response;
+    
     let parseInfo = function(payload){
       let parsed = JSON.parse(payload); // this is how you parse a string into JSON 
       console.log("++++++STEP6B:",parsed);
       return parsed;
     }
-
-    let parsedReady = await parseInfo(payloadToParse);
-    this.handleCases(parsedReady.payload)
-    
-  }
-
-  handleCases(payload) {
-
-    //let parsed;
-
-    // try {
-    //   parsed = JSON.parse(payload); // this is how you parse a string into JSON 
-    //   console.log("++++++STEP6:",parsed);
-    //   //action = parsed.payload;
-
-    // } catch (ex) {
-    //   console.error(ex);
-    // }
-    
-    let response;
-
+   
     let message = this.webhookEvent.message.text.trim().toLowerCase();
 
     //Check Business G-Places type
@@ -52,14 +34,9 @@ module.exports = class Record {
       let f = a.find(e => e === toCheck);
       return f == toCheck;
     };
-    
 
-    switch (payload) {
-
-      case "RECORD_SAVE":
-
-        //1. Define location and acquire place ID (READY)
-        // A new component called 'record' that handle the SWITCH statement a little different.(it unpacks payload, extract action)
+    //1. READY Define location and acquire place ID (READY)
+        //1.2 READY A new component called 'record' that handle the SWITCH statement a little different.(it unpacks payload, extract action)
         //2. 'QuickReply' displays the option for : REVIEW | SHOW ACCESSIBILITY (carry ID)
         //2.1 Create logic to choose between 3 possible Accessibility Reports: Ramp, Braile, Restroom (QuickReply) (carry ID)
         //2.2 Choose if True or False (QuickReply) (carry ID)
@@ -68,21 +45,16 @@ module.exports = class Record {
         //5. Extract Name, id, and thing to report and trigger mutation.
         //6. Get Callback (or await) for it and show final message "Your info was recorded", show initial Menu
         
-        console.log("++++RECORD_SAVE");
-        //action: "save"
-        //id:id
-        //placeId: 123
-        //name: "entrance Ramp"  
-        //code: "ramp_01"
-        //value: true | false
-        //photo: url
-        //credit: user
-        //createdAt: timestamp
-        
-      break;
+
+    switch (payload) {
 
       case "RECORD_LIST":
+
           console.log("++++RECORD_LIST");
+          response = [
+            Response.genText("LIST Queried"),
+          ]
+          
         //action:"list"
         //placeId: 123
 

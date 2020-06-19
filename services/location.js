@@ -106,9 +106,6 @@ module.exports = class Location {
 
         /// SAVE DATA +++++++++++++++++++++++++++++++++++++++++++
 
-            
-
-
           var mutation = `mutation CreateMessage($xid: ID!, $content: String ){createMessage(id: $xid, content: $content, conversationId: "9714", createdAt:"12345" ) {
                 content
                 createdAt
@@ -195,7 +192,7 @@ module.exports = class Location {
 
             //Passing Context to next message
             //let details= {payload:'LOCATION_CHOSEN', name: apiResults[0].name , address: apiResults[0].formatted_address ,id: apiResults[0].id };
-            let details= {payload:'RECORD_SAVE', name: apiResults[0].name , address: apiResults[0].formatted_address ,id: apiResults[0].id };
+            let details= {payload:'RECORD_LIST', name: apiResults[0].name , address: apiResults[0].formatted_address ,id: apiResults[0].id };
 
             details= JSON.stringify(details);
 
