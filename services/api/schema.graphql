@@ -1,0 +1,15 @@
+type Review @model{
+  id: ID!
+  placeId: String
+  placeAddress: String
+  placeStatus: String
+  placeName: String
+  review: String
+  displayName: String
+  degree: String
+  value: String
+  status: String
+  createdAt: String
+  createdBy: String
+}
+

@@ -164,7 +164,31 @@ module.exports = class Receive {
       let placeId = parsedReady.id;
       let placeAddress = "23 elm street";
 
-        var mutation = `mutation CreateMessage($placeId: ID!, $placeName: String ){createMessage(id: 1234, content: $placeName, conversationId: $placeId, createdAt:"12345" ) {
+        var input = {placeId, placeName, placeAddress};
+      
+//{"placeId": "123","placeName": "qwerty Bar"}
+        var mutation = `mutation CreateReview(
+          $input: CreateReviewInput!
+          $condition: ModelReviewConditionInput
+        ) {
+          createReview(input: $input, condition: $condition) {
+            id
+            placeId
+            placeAddress
+            placeStatus
+            placeName
+            review
+            displayName
+            degree
+            value
+            status
+            createdAt
+            createdBy
+            updatedAt
+          }
+        }`;
+
+        var mutation2 = `mutation CreateMessage($placeId: ID!, $placeName: String ){createMessage(id: 1234, content: $placeName, conversationId: $placeId, createdAt:"12345" ) {
             content
             createdAt
           }
@@ -182,7 +206,7 @@ module.exports = class Receive {
             },
             body: JSON.stringify({
               query: mutation,
-              variables:{placeId, placeName},
+              variables:{input},
             })
           }
         );
