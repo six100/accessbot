@@ -60,9 +60,9 @@ module.exports = class Record {
 
       case "RECORD_SAVE":
           
-          // response = [
-          //   Response.genText("Record Saved"),
-          // ]
+          console.log('[STEP 64.1]:', payload);
+          console.log('[STEP 64.2]:', details);
+          console.log('[STEP 64.3]:', parsed);
 
           response = [
             Response.genQuickReply(parsed.question, [
@@ -80,9 +80,7 @@ module.exports = class Record {
               }
             ])
           ]
-          
-        //action:"list"
-        //placeId: 123
+        
 
       break;
 
@@ -110,11 +108,25 @@ module.exports = class Record {
           console.log("+++RECORD_CHECK :", this.apiResponse.data.listReviews.items)
           let items = this.apiResponse.data.listReviews.items;
           
-          const amenities =[
-            Response.genText(`This is what we found about "${parsed.placeName}"`),
-          ];
-          //1. TO DISPLAY QUICK BUTTONS
+          
+          let amenities;
 
+          if(items.length >=1){
+            amenities =[
+              Response.genText(`This is what we found about "${parsed.placeName}"`),
+            ];
+          }else{
+            amenities =[
+              Response.genText(`We couldn't find any accessibility information`),
+              Response.genText(`Do you want to review the accessibility of "${parsed.placeName}"`),
+              Response.genPostbackButton("YES", 
+                JSON.stringify({payload:"RECORD_SAVE", item:0, placeName:parsed.placeName, placeAddress:parsed.placeAddress, placeId:parsed.placeId})
+                )
+            ];
+          }
+          
+
+          //1. TO DISPLAY QUICK BUTTONS
           
           // items.map((keyName, i) => (
           //   amenities.push({"title": `${keyName.value == 'true'? '✅' : '❌'} ${keyName.review}`, "payload": "RECORD-XYZ"}

@@ -276,12 +276,9 @@ module.exports = class Receive {
     let value = parsed.value;
     let item = parsed.item;
     //100 == visible
-    let status = "100"
+    let status = "100";
 
-    console.log("+++++++++++++ITEM COUNT",parsed.item)
-    console.log("+++++++++++++QUESTIONS",questions)
-
-
+   
     let newPayload;
     if(questions[item]){
       newPayload = {payload, item: item+1, question:questions[item].question, review:questions[item].review, placeName, placeAddress, placeId }
@@ -628,12 +625,13 @@ module.exports = class Receive {
     } else if (payload.includes("RECORD_QUESTION")) {
 
       console.log('[STEP 61]:', payload);
-      this.recordQuestion(payload);ss
+      this.recordQuestion(payload);
 
     } else if (payload.includes("RECORD_SAVE")) {
 
       console.log('[STEP 64]:', payload);
       this.recordSave(payload);
+
     } else if (payload.includes("RECORD_CHECK")) {
       
       this.recordCheck(payload);
