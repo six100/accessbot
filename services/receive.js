@@ -50,15 +50,12 @@ module.exports = class Receive {
         responses = this.handleReferral();
       }
     } catch (error) {
-
       console.error("++2.10 ERROR:",error);
       responses = {
         text: `An error has occured: '${error}'. We have been notified and \
         will fix the issue shortly!`
       };
     }
-
-    console.log('++++++PREPARING TO SEND MESSAGE (:54)', responses)
 
     if (Array.isArray(responses)) {
       
@@ -88,17 +85,14 @@ module.exports = class Receive {
     
         let location = new Location(this.user, this.webhookEvent, r.data);
         let responses = location.handlePayload("LOCATION_SEARCH");
-        console.log('RESPONSE INSIDE FUNC',responses);
 
         if (Array.isArray(responses)) {
-          //console.log('ARRAY RESPONSE:',responses);
           let delay = 0;
           for (let response of responses) {
             this.sendMessage(response, delay * 2000);
             delay++;
           }
         } else {
-          //console.log('NOTARRAY RESPONSE:',responses);
           this.sendMessage(responses);
         }
 
@@ -111,9 +105,6 @@ module.exports = class Receive {
     const client = new Client({});
 
     console.log('+++ getPlaceByText()')
-
-      //.placesNearby
-      //.textSearch
 
     await client
       .textSearch({
@@ -131,14 +122,13 @@ module.exports = class Receive {
         let responses = location.handlePayload("LOCATION_SEARCH");
 
         if (Array.isArray(responses)) {
-          //console.log('ARRAY RESPONSE:',responses);
+          
           let delay = 0;
           for (let response of responses) {
             this.sendMessage(response, delay * 2000);
             delay++;
           }
         } else {
-          //console.log('NOTARRAY RESPONSE:',responses);
           this.sendMessage(responses);
         }
 
@@ -150,7 +140,7 @@ module.exports = class Receive {
   async recordByPlace(payloadRaw){
 
     let parseInfo = function(payload){
-      let parsed = JSON.parse(payload); // this is how you parse a string into JSON 
+      let parsed = JSON.parse(payload); 
       return parsed;
     }
 
@@ -163,8 +153,7 @@ module.exports = class Receive {
       let placeAddress = payloadParsed.placeAddress;
 
         var input = {placeId, placeName, placeAddress};
-      
-//{"placeId": "123","placeName": "qwerty Bar"}
+
         var mutation = `mutation CreateReview(
           $input: CreateReviewInput!
           $condition: ModelReviewConditionInput

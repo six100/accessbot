@@ -495,28 +495,6 @@ module.exports = class Location {
         
         default: 
 
-        //UnStringify payload
-
-        //Passing Context to next message
-        let details= {payload:'RECORD_REPORT', name: "placeNAme" , address: "placeAddress" ,id: "placeId" };
-        ////let details= {payload:'LOCATION_CHOSEN', name: apiResults[0].name , address: apiResults[0].formatted_address ,id: apiResults[0].id };
-
-        details= JSON.stringify(details);
-        //create new payload
-
-        if(parsed.name){response = [
-            Response.genGenericTemplate(
-              `${config.shopUrl}/images/demo/${i18n.__("demo.image")}`,
-              `${parsed.name ? parsed.name : 'Bonitaa Restaurant'}`,
-              `${parsed.address  ? parsed.address : '123 2nd Ave.'}`,
-              [Response.genPostbackButton(i18n.__("location.showAmenities"), "LOCATION_AMENITIES"),
-              Response.genPostbackButton("REPORT ACCESSIBILITY", details),
-              Response.genPostbackButton("CHECK ACCESSIBILITY", details),
-            ]
-            )
-          ]
-        }else{
-
           response = [ 
             Response.genQuickReply("Available information", [
               {
@@ -538,9 +516,8 @@ module.exports = class Location {
             ])
           ]
 
-        }
+        
         break;
-
         
       
     }
