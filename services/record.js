@@ -55,66 +55,7 @@ module.exports = class Record {
         }
 
         break;
-
-      case "RECORD_QUESTION":
-
-          // console.log("[STEP 63]", parsed);
-
-          // response = [
-          //   Response.genQuickReply("Do you see a Ramp at the entrance?", [
-          //     {
-          //       title:`Yes I do`,
-          //       payload: JSON.stringify({payload:"RECORD_SAVE", item:2, review:"ramp_entrance", value:"true", placeName:parsed.placeName, placeAddress:parsed.placeAddress, placeId:parsed.placeId})
-          //     },
-          //     {
-          //       title:`No I don't`,
-          //       payload: JSON.stringify({payload:"RECORD_SAVE", item:2, review:"ramp_entrance", value:"false", placeName:parsed.placeName, placeAddress:parsed.placeAddress, placeId:parsed.placeId})
-          //     },
-          //     {
-          //       title:`Help me`,
-          //       payload: JSON.stringify({payload:"RECORD_HELP", help:1, placeName:parsed.placeName, placeAddress:parsed.placeAddress, placeId:parsed.placeId})
-          //     }
-          //   ])
-          // ]
-
-          // response = [
-          //   Response.genQuickReply("Do you see a Ramp at the entrance?", [
-          //     {
-          //       title:`Yes I do`,
-          //       payload:'RECORD_SAVE'
-          //     },
-          //     {
-          //       title:`No I don't`,
-          //       payload:'RECORD_SAVE2'
-          //     },
-          //     {
-          //       title:`Help me`,
-          //       payload: 'RECORD_SAVE3'
-          //     }
-          //   ])
-          // ]
-          // response = [ 
-          //   Response.genQuickReply("This is Record Default", [
-          //     {
-          //       title:"General",
-          //       payload: "LOCATION_CHOSEN"
-          //     },
-          //     {
-          //       title:"Accessibility",
-          //       payload: "LOCATION_AMENITIES"
-          //     },
-          //     {
-          //       title:"Photos",
-          //       payload: "LOCATION_GALLERY"
-          //     },
-          //     {
-          //       title:"X",
-          //       payload: "LOCATION_CLEAR"
-          //     }
-          //   ])
-          // ]
-        
-      break;
+ 
 
       case "RECORD_SAVE":
           
