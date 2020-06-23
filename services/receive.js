@@ -223,6 +223,133 @@ module.exports = class Receive {
    
   }
 
+  async recordQuestion(payloadRaw){
+
+    //Here you should load  previous User Questions
+
+    let parseInfo = function(payload){
+      let parsed = JSON.parse(payload); 
+      return parsed;
+    }
+    let payloadParsed = await parseInfo(payloadRaw);
+    console.log("STEP 62",payloadParsed);
+
+    let record = new Record(this.user, this.webhookEvent);
+    let responses = record.handlePayload("RECORD_QUESTION", payloadRaw);
+
+    console.log("[STEP 64]", responses);
+    console.log("[STEP 64B]", JSON.stringify(responses));
+    
+    if (Array.isArray(responses)) {
+      //console.log('ARRAY RESPONSE:',responses);
+      let delay = 0;
+      for (let response of responses) {
+        this.sendMessage(response, delay * 2000);
+        delay++;
+      }
+    } else {
+      //console.log('NOTARRAY RESPONSE:',responses);
+      this.sendMessage(responses);
+    }
+
+
+  }
+
+  async recordSave(payloadRaw){
+
+    let parseInfo = function(payload){
+      let parsed = JSON.parse(payload); 
+      return parsed;
+    }
+
+    let payloadParsed = await parseInfo(payloadRaw);
+
+
+      let placeName = payloadParsed.placeName;
+      let placeId = payloadParsed.placeId;
+      let placeAddress = payloadParsed.placeAddress;
+      //NEW
+      let review = payloadParsed.review;
+      //NEW
+      let value = payloadParsed.value;
+        //DIFFERENT
+        var input = {placeId, placeName, placeAddress, review, value};
+        console.log("[STEP 65A]:",input)
+
+        var mutation = `mutation CreateReview(
+          $input: CreateReviewInput!
+          $condition: ModelReviewConditionInput
+        ) {
+          createReview(input: $input, condition: $condition) {
+            id
+            placeId
+            placeAddress
+            placeStatus
+            placeName
+            review
+            displayName
+            degree
+            value
+            status
+            createdAt
+            createdBy
+            updatedAt
+          }
+        }`;
+
+      try {
+        const apiResponse = await fetch(
+          config.crudUrl, 
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-api-key':config.crudKey,
+              //'Accept': 'application/json',
+            },
+            body: JSON.stringify({
+              query: mutation,
+              variables:{input},
+            })
+          }
+        );
+
+        const json = await apiResponse.json();
+        console.log("[STEP 65B]:",json)
+       
+        let record = new Record(this.user, this.webhookEvent);
+        //MODIFIED
+        let responses = record.handlePayload(payloadParsed.payload, payloadRaw);
+        
+
+        //This is going
+
+        if (Array.isArray(responses)) {
+          //console.log('ARRAY RESPONSE:',responses);
+          let delay = 0;
+          for (let response of responses) {
+            this.sendMessage(response, delay * 2000);
+            delay++;
+          }
+        } else {
+          //console.log('NOTARRAY RESPONSE:',responses);
+          this.sendMessage(responses);
+        }
+
+        console.log('WRITE API ANSWER',JSON.stringify(json))
+        return json;
+        
+      } catch (error) {
+        console.log('WRITE API ERROR',error);
+      }
+   
+  }
+
+  async recordCheck(){
+    console.log("Record Check here"); 
+   
+  }
+
   // Handles messages events with text
   handleTextMessage() {
 
@@ -363,7 +490,7 @@ module.exports = class Receive {
       // Get the payload of the postback
       payload = postback.payload;
     }
-    return this.handlePayload(payload.toUpperCase());
+    return this.handlePayload(payload);
   }
 
   // Handles referral events
@@ -397,13 +524,24 @@ module.exports = class Receive {
       response = location.handlePayload(payload);
       //This is catching a massive stringifiedblob
     } else if (payload.includes("STARTPLACE")) {
+
       console.log('[STEP 55]:', payload);
       this.recordByPlace(payload);
+
+    } else if (payload.includes("RECORD_QUESTION")) {
+
+      console.log('[STEP 61]:', payload);
+      this.recordQuestion(payload);
+
+    } else if (payload.includes("RECORD_SAVE")) {
+
+      console.log('[STEP 64]:', payload);
+      this.recordSave(payload);
 
     } else if (payload.includes("RECORD")) {
       let record = new Record(this.user, this.webhookEvent);
       response = record.handlePayload(payload);
-
+      
     } else if (payload.includes("CARE")) {
       let care = new Care(this.user, this.webhookEvent);
       response = care.handlePayload(payload);
@@ -474,35 +612,40 @@ module.exports = class Receive {
     GraphAPi.callSendAPI(requestBody);
   }
 
-  sendMessage(response, delay = 0) {
+  sendMessage(response=[], delay = 0) {
     console.log("sendMessageHere:",response)
     // Check if there is delay in the response
-    if ("delay" in response) {
-      delay = response["delay"];
-      delete response["delay"];
-    }
 
-    // Construct the message body
-    let requestBody = {
-      recipient: {
-        id: this.user.psid
-      },
-      message: response
-    };
+    
+      if ("delay" in response) {
+        delay = response["delay"];
+        delete response["delay"];
+      }
 
-    // Check if there is persona id in the response
-    if ("persona_id" in response) {
-      let persona_id = response["persona_id"];
-      delete response["persona_id"];
-
-      requestBody = {
+        // Construct the message body
+      let requestBody = {
         recipient: {
           id: this.user.psid
         },
-        message: response,
-        persona_id: persona_id
+        message: response
       };
-    }
+
+      // Check if there is persona id in the response
+      if ("persona_id" in response) {
+        let persona_id = response["persona_id"];
+        delete response["persona_id"];
+
+        requestBody = {
+          recipient: {
+            id: this.user.psid
+          },
+          message: response,
+          persona_id: persona_id
+        };
+      }
+
+    
+    
 
     setTimeout(() => GraphAPi.callSendAPI(requestBody), delay);
   }

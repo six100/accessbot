@@ -227,11 +227,10 @@ module.exports = class Location {
               if(i <= (apiResults.length -1) ){
                 console.log(apiResults[i].name);
 
-                //Passing Context to next message (Unfortunately we need to do it this way)
                 let details= {payload:'STARTPLACE', placeName: apiResults[i].name , placeAddress: apiResults[i].formatted_address ,placeId: apiResults[i].id };
-                console.log("+STEP1:", details );
+                
                 details= JSON.stringify(details);
-                console.log("++STEP2:", details );
+                
 
                 places.push({"title": apiResults[i].formatted_address, "payload": details}
                 )
