@@ -9,9 +9,10 @@ const Response = require("./response"),
   
 
 module.exports = class Record {
-  constructor(user, webhookEvent, details) {
+  constructor(user, webhookEvent, apiResponse) {
     this.user = user;
     this.webhookEvent = webhookEvent;
+    this.apiResponse = apiResponse;
     
   }
 
@@ -55,72 +56,13 @@ module.exports = class Record {
         }
 
         break;
-
-      case "RECORD_QUESTION":
-
-          // console.log("[STEP 63]", parsed);
-
-          // response = [
-          //   Response.genQuickReply("Do you see a Ramp at the entrance?", [
-          //     {
-          //       title:`Yes I do`,
-          //       payload: JSON.stringify({payload:"RECORD_SAVE", item:2, review:"ramp_entrance", value:"true", placeName:parsed.placeName, placeAddress:parsed.placeAddress, placeId:parsed.placeId})
-          //     },
-          //     {
-          //       title:`No I don't`,
-          //       payload: JSON.stringify({payload:"RECORD_SAVE", item:2, review:"ramp_entrance", value:"false", placeName:parsed.placeName, placeAddress:parsed.placeAddress, placeId:parsed.placeId})
-          //     },
-          //     {
-          //       title:`Help me`,
-          //       payload: JSON.stringify({payload:"RECORD_HELP", help:1, placeName:parsed.placeName, placeAddress:parsed.placeAddress, placeId:parsed.placeId})
-          //     }
-          //   ])
-          // ]
-
-          // response = [
-          //   Response.genQuickReply("Do you see a Ramp at the entrance?", [
-          //     {
-          //       title:`Yes I do`,
-          //       payload:'RECORD_SAVE'
-          //     },
-          //     {
-          //       title:`No I don't`,
-          //       payload:'RECORD_SAVE2'
-          //     },
-          //     {
-          //       title:`Help me`,
-          //       payload: 'RECORD_SAVE3'
-          //     }
-          //   ])
-          // ]
-          // response = [ 
-          //   Response.genQuickReply("This is Record Default", [
-          //     {
-          //       title:"General",
-          //       payload: "LOCATION_CHOSEN"
-          //     },
-          //     {
-          //       title:"Accessibility",
-          //       payload: "LOCATION_AMENITIES"
-          //     },
-          //     {
-          //       title:"Photos",
-          //       payload: "LOCATION_GALLERY"
-          //     },
-          //     {
-          //       title:"X",
-          //       payload: "LOCATION_CLEAR"
-          //     }
-          //   ])
-          // ]
-        
-      break;
+ 
 
       case "RECORD_SAVE":
           
-          // response = [
-          //   Response.genText("Record Saved"),
-          // ]
+          console.log('[STEP 64.1]:', payload);
+          console.log('[STEP 64.2]:', details);
+          console.log('[STEP 64.3]:', parsed);
 
           response = [
             Response.genQuickReply(parsed.question, [
@@ -138,9 +80,7 @@ module.exports = class Record {
               }
             ])
           ]
-          
-        //action:"list"
-        //placeId: 123
+        
 
       break;
 
@@ -164,13 +104,46 @@ module.exports = class Record {
 
       case "RECORD_CHECK":
 
-          console.log("++++RECORD_CHECK",parsed);
-          response = [
-            Response.genText("Record Check"),
-          ]
           
-        //action:"list"
-        //placeId: 123
+          console.log("+++RECORD_CHECK :", this.apiResponse.data.listReviews.items)
+          let items = this.apiResponse.data.listReviews.items;
+          
+          
+          let amenities;
+
+          if(items.length >=1){
+            amenities =[
+              Response.genText(`This is what we found about "${parsed.placeName}"`),
+            ];
+          }else{
+            amenities =[
+              Response.genText(`We couldn't find any accessibility information`),
+              Response.genText(`Do you want to review the accessibility of "${parsed.placeName}"`),
+              Response.genPostbackButton("YES", 
+                JSON.stringify({payload:"RECORD_SAVE", item:0, placeName:parsed.placeName, placeAddress:parsed.placeAddress, placeId:parsed.placeId})
+                )
+            ];
+          }
+          
+
+          //1. TO DISPLAY QUICK BUTTONS
+          
+          // items.map((keyName, i) => (
+          //   amenities.push({"title": `${keyName.value == 'true'? '✅' : '❌'} ${keyName.review}`, "payload": "RECORD-XYZ"}
+          // )));
+          // response = [
+          //   Response.genText("This is what we found"),
+          //   Response.genQuickReply("in this place", amenities)
+          // ]
+
+
+          //2. TO DISPLAY REGULAR MESSAGES 
+
+          items.map((keyName, i) => (
+            amenities.push(Response.genText(`${keyName.value == 'true'? '✅' : '❌'} ${keyName.review}`))
+          ));
+          
+          response = amenities;
 
       break;
 

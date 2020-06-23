@@ -275,11 +275,10 @@ module.exports = class Receive {
     let review = parsed.review;
     let value = parsed.value;
     let item = parsed.item;
+    //100 == visible
+    let status = "100";
 
-    console.log("+++++++++++++ITEM COUNT",parsed.item)
-    console.log("+++++++++++++QUESTIONS",questions)
-
-
+   
     let newPayload;
     if(questions[item]){
       newPayload = {payload, item: item+1, question:questions[item].question, review:questions[item].review, placeName, placeAddress, placeId }
@@ -289,7 +288,7 @@ module.exports = class Receive {
     }
 
         //DIFFERENT
-        var input = {placeId, placeName, placeAddress, review, value};
+        var input = {placeId, placeName, placeAddress, review, value, status};
         console.log("[STEP 65A]:",input)
 
         var mutation = `mutation CreateReview(
@@ -361,8 +360,87 @@ module.exports = class Receive {
    
   }
 
-  async recordCheck(){
+  async recordCheck(payloadRaw){
+
     console.log("Record Check here"); 
+
+    let parseInfo = function(payload){
+      let p = JSON.parse(payload); 
+      return p;
+    }
+
+    let parsed = await parseInfo(payloadRaw);
+    
+    let placeId = parsed.placeId;
+
+    let limit = 100;
+    let filter = {"placeId" : {"eq" : placeId}, "status":{"eq" : "100"}};
+   
+      var query = `query ListReviews(
+        $filter: ModelReviewFilterInput
+        $limit: Int
+        $nextToken: String
+      ) {
+        listReviews(filter: $filter, limit: $limit, nextToken: $nextToken) {
+          items {
+            placeName
+            placeAddress
+            review
+            value
+            createdAt
+            placeId
+            status
+          }
+          nextToken
+        }
+      }`;
+
+      try {
+        const apiResponse = await fetch(
+          config.crudUrl, 
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-api-key':config.crudKey,
+              //'Accept': 'application/json',
+            },
+            body: JSON.stringify({
+              query: query,
+              variables:{filter, limit},
+            })
+          }
+        );
+
+        const json = await apiResponse.json();
+        console.log("[STEP ??]:",json)
+       
+        let record = new Record(this.user, this.webhookEvent, json);
+        //MODIFIED
+
+        let responses = record.handlePayload(parsed.payload, payloadRaw);
+        
+
+        //This is going
+
+        if (Array.isArray(responses)) {
+          //console.log('ARRAY RESPONSE:',responses);
+          let delay = 0;
+          for (let response of responses) {
+            this.sendMessage(response, delay * 2000);
+            delay++;
+          }
+        } else {
+          //console.log('NOTARRAY RESPONSE:',responses);
+          this.sendMessage(responses);
+        }
+
+        console.log('LIST API ANSWER',JSON.stringify(json))
+        return json;
+        
+      } catch (error) {
+        console.log('LIST API ERROR',error);
+      }
    
   }
 
@@ -553,6 +631,10 @@ module.exports = class Receive {
 
       console.log('[STEP 64]:', payload);
       this.recordSave(payload);
+
+    } else if (payload.includes("RECORD_CHECK")) {
+      
+      this.recordCheck(payload);
 
     } else if (payload.includes("RECORD")) {
       let record = new Record(this.user, this.webhookEvent);
