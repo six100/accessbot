@@ -258,20 +258,36 @@ module.exports = class Receive {
   async recordSave(payloadRaw){
 
     let parseInfo = function(payload){
-      let parsed = JSON.parse(payload); 
-      return parsed;
+      let p = JSON.parse(payload); 
+      return p;
     }
 
-    let payloadParsed = await parseInfo(payloadRaw);
+    let parsed = await parseInfo(payloadRaw);
+
+    let questions =[{question:"Do you see a Ramp at the entrance", review:"ramp_entrance1"},
+    {question:"Does the place have Braile signage or menus?", review:"braile_signs2"},
+    {question:"Is the restroom in the first floor?", review:"restroom_floor3"}]
+
+    let payload = parsed.payload;
+    let placeName = parsed.placeName;
+    let placeId = parsed.placeId;
+    let placeAddress = parsed.placeAddress;
+    let review = parsed.review;
+    let value = parsed.value;
+    let item = parsed.item;
+
+    console.log("+++++++++++++ITEM COUNT",parsed.item)
+    console.log("+++++++++++++QUESTIONS",questions)
 
 
-      let placeName = payloadParsed.placeName;
-      let placeId = payloadParsed.placeId;
-      let placeAddress = payloadParsed.placeAddress;
-      //NEW
-      let review = payloadParsed.review;
-      //NEW
-      let value = payloadParsed.value;
+    let newPayload;
+    if(questions[item]){
+      newPayload = {payload, item: item+1, question:questions[item].question, review:questions[item].review, placeName, placeAddress, placeId }
+    }else{
+      newPayload={payload:"RECORD_DEFAULT", placeName, placeAddress, placeId}
+      payload = "RECORD_THANKS";
+    }
+
         //DIFFERENT
         var input = {placeId, placeName, placeAddress, review, value};
         console.log("[STEP 65A]:",input)
@@ -319,7 +335,7 @@ module.exports = class Receive {
        
         let record = new Record(this.user, this.webhookEvent);
         //MODIFIED
-        let responses = record.handlePayload(payloadParsed.payload, payloadRaw);
+        let responses = record.handlePayload(payload, JSON.stringify(newPayload));
         
 
         //This is going

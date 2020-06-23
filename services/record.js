@@ -44,10 +44,10 @@ module.exports = class Record {
               `${parsed.placeName ? parsed.placeName : 'unknown'}`,
               `${parsed.placeAddress  ? parsed.placeAddress : 'unknown'}`,
               [Response.genPostbackButton("Report Accessibility", 
-                JSON.stringify({payload:"RECORD_QUESTION", question:"1", placeName:parsed.placeName, placeAddress:parsed.placeAddress, placeId:parsed.placeId})
+                JSON.stringify({payload:"RECORD_SAVE", item:0, placeName:parsed.placeName, placeAddress:parsed.placeAddress, placeId:parsed.placeId})
                 ),
                 Response.genPostbackButton("Check Accessibility", 
-                JSON.stringify({payload:"RECORD_CHECK", placeName:parsed.placeName, placeAddress:parsed.placeAddress, placeId:parsed.placeId})
+                JSON.stringify({payload:"RECORD_CHECK", item:0, placeName:parsed.placeName, placeAddress:parsed.placeAddress, placeId:parsed.placeId})
                 )
               ]
             )
@@ -58,24 +58,24 @@ module.exports = class Record {
 
       case "RECORD_QUESTION":
 
-          console.log("[STEP 63]", parsed);
+          // console.log("[STEP 63]", parsed);
 
-          response = [
-            Response.genQuickReply("Do you see a Ramp at the entrance?", [
-              {
-                title:`Yes I do`,
-                payload: JSON.stringify({payload:"RECORD_SAVE", question:2, review:"ramp_entrance", value:"true", placeName:parsed.placeName, placeAddress:parsed.placeAddress, placeId:parsed.placeId})
-              },
-              {
-                title:`No I don't`,
-                payload: JSON.stringify({payload:"RECORD_SAVE", question:2, review:"ramp_entrance", value:"false", placeName:parsed.placeName, placeAddress:parsed.placeAddress, placeId:parsed.placeId})
-              },
-              {
-                title:`Help me`,
-                payload: JSON.stringify({payload:"RECORD_HELP", help:1, placeName:parsed.placeName, placeAddress:parsed.placeAddress, placeId:parsed.placeId})
-              }
-            ])
-          ]
+          // response = [
+          //   Response.genQuickReply("Do you see a Ramp at the entrance?", [
+          //     {
+          //       title:`Yes I do`,
+          //       payload: JSON.stringify({payload:"RECORD_SAVE", item:2, review:"ramp_entrance", value:"true", placeName:parsed.placeName, placeAddress:parsed.placeAddress, placeId:parsed.placeId})
+          //     },
+          //     {
+          //       title:`No I don't`,
+          //       payload: JSON.stringify({payload:"RECORD_SAVE", item:2, review:"ramp_entrance", value:"false", placeName:parsed.placeName, placeAddress:parsed.placeAddress, placeId:parsed.placeId})
+          //     },
+          //     {
+          //       title:`Help me`,
+          //       payload: JSON.stringify({payload:"RECORD_HELP", help:1, placeName:parsed.placeName, placeAddress:parsed.placeAddress, placeId:parsed.placeId})
+          //     }
+          //   ])
+          // ]
 
           // response = [
           //   Response.genQuickReply("Do you see a Ramp at the entrance?", [
@@ -118,12 +118,47 @@ module.exports = class Record {
 
       case "RECORD_SAVE":
           
+          // response = [
+          //   Response.genText("Record Saved"),
+          // ]
+
           response = [
-            Response.genText("Record Saved"),
+            Response.genQuickReply(parsed.question, [
+              {
+                title:`Yes`,
+                payload: JSON.stringify({payload:parsed.payload, item:parsed.item, review:parsed.review, value:"true", placeName:parsed.placeName, placeAddress:parsed.placeAddress, placeId:parsed.placeId})
+              },
+              {
+                title:`No`,
+                payload: JSON.stringify({payload:parsed.payload, item:parsed.item, review:parsed.review, value:"false", placeName:parsed.placeName, placeAddress:parsed.placeAddress, placeId:parsed.placeId})
+              },
+              {
+                title:`Help me`,
+                payload: JSON.stringify({payload:"RECORD_HELP", help:2, placeName:parsed.placeName, placeAddress:parsed.placeAddress, placeId:parsed.placeId})
+              }
+            ])
           ]
           
         //action:"list"
         //placeId: 123
+
+      break;
+
+      case "RECORD_THANKS":
+          
+          response = [
+            Response.genText("Thanks for your answers"),
+            Response.genQuickReply("Next steps:", [
+              {
+                title:"Review different place",
+                payload: "LOCATION_DEFAULT"
+              },
+              {
+                title:"Change Review of this place",
+                payload: "LOCATION_DEFAULT"
+              }
+            ])
+          ]
 
       break;
 
