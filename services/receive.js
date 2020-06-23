@@ -50,15 +50,12 @@ module.exports = class Receive {
         responses = this.handleReferral();
       }
     } catch (error) {
-
       console.error("++2.10 ERROR:",error);
       responses = {
         text: `An error has occured: '${error}'. We have been notified and \
         will fix the issue shortly!`
       };
     }
-
-    console.log('++++++PREPARING TO SEND MESSAGE (:54)', responses)
 
     if (Array.isArray(responses)) {
       
@@ -88,17 +85,14 @@ module.exports = class Receive {
     
         let location = new Location(this.user, this.webhookEvent, r.data);
         let responses = location.handlePayload("LOCATION_SEARCH");
-        console.log('RESPONSE INSIDE FUNC',responses);
 
         if (Array.isArray(responses)) {
-          //console.log('ARRAY RESPONSE:',responses);
           let delay = 0;
           for (let response of responses) {
             this.sendMessage(response, delay * 2000);
             delay++;
           }
         } else {
-          //console.log('NOTARRAY RESPONSE:',responses);
           this.sendMessage(responses);
         }
 
@@ -111,9 +105,6 @@ module.exports = class Receive {
     const client = new Client({});
 
     console.log('+++ getPlaceByText()')
-
-      //.placesNearby
-      //.textSearch
 
     await client
       .textSearch({
@@ -131,14 +122,13 @@ module.exports = class Receive {
         let responses = location.handlePayload("LOCATION_SEARCH");
 
         if (Array.isArray(responses)) {
-          //console.log('ARRAY RESPONSE:',responses);
+          
           let delay = 0;
           for (let response of responses) {
             this.sendMessage(response, delay * 2000);
             delay++;
           }
         } else {
-          //console.log('NOTARRAY RESPONSE:',responses);
           this.sendMessage(responses);
         }
 
@@ -147,26 +137,41 @@ module.exports = class Receive {
       });
   }
   
-  async recordByPlace(payloadToParse){
+  async recordByPlace(payloadRaw){
 
     let parseInfo = function(payload){
-      let parsed = JSON.parse(payload); // this is how you parse a string into JSON 
-      console.log("++++++STEP6B:",parsed);
+      let parsed = JSON.parse(payload); 
       return parsed;
     }
 
-    let parsedReady = await parseInfo(payloadToParse);
+    let payloadParsed = await parseInfo(payloadRaw);
+    console.log("[STEP 56]:",payloadParsed);
 
-    console.log('+++ recordByPlace()')
-    console.log(parsedReady)
 
-      let placeName = parsedReady.name;
-      let placeId = parsedReady.id;
-      let placeAddress = "23 elm street";
+      let placeName = payloadParsed.placeName;
+      let placeId = payloadParsed.placeId;
+      let placeAddress = payloadParsed.placeAddress;
 
-        var mutation = `mutation CreateMessage($placeId: ID!, $placeName: String ){createMessage(id: 1234, content: $placeName, conversationId: $placeId, createdAt:"12345" ) {
-            content
+        var input = {placeId, placeName, placeAddress};
+
+        var mutation = `mutation CreateReview(
+          $input: CreateReviewInput!
+          $condition: ModelReviewConditionInput
+        ) {
+          createReview(input: $input, condition: $condition) {
+            id
+            placeId
+            placeAddress
+            placeStatus
+            placeName
+            review
+            displayName
+            degree
+            value
+            status
             createdAt
+            createdBy
+            updatedAt
           }
         }`;
 
@@ -182,15 +187,20 @@ module.exports = class Receive {
             },
             body: JSON.stringify({
               query: mutation,
-              variables:{placeId, placeName},
+              variables:{input},
             })
           }
         );
 
         const json = await apiResponse.json();
+        console.log("[STEP 57]:",json)
 
-        let location = new Location(this.user, this.webhookEvent);
-        let responses = location.handlePayload(payloadToParse);
+        console.log("[STEP 58]:",payloadRaw)
+        let record = new Record(this.user, this.webhookEvent);
+        let responses = record.handlePayload("RECORD_WELCOME", payloadRaw);
+        
+
+        //This is going
 
         if (Array.isArray(responses)) {
           //console.log('ARRAY RESPONSE:',responses);
@@ -204,7 +214,143 @@ module.exports = class Receive {
           this.sendMessage(responses);
         }
 
+        console.log('WRITE API ANSWER',JSON.stringify(json))
+        return json;
+        
+      } catch (error) {
+        console.log('WRITE API ERROR',error);
+      }
+   
+  }
 
+  async recordQuestion(payloadRaw){
+
+    //Here you should load  previous User Questions
+
+    let parseInfo = function(payload){
+      let parsed = JSON.parse(payload); 
+      return parsed;
+    }
+    let payloadParsed = await parseInfo(payloadRaw);
+    console.log("STEP 62",payloadParsed);
+
+    let record = new Record(this.user, this.webhookEvent);
+    let responses = record.handlePayload("RECORD_QUESTION", payloadRaw);
+
+    console.log("[STEP 64]", responses);
+    console.log("[STEP 64B]", JSON.stringify(responses));
+    
+    if (Array.isArray(responses)) {
+      //console.log('ARRAY RESPONSE:',responses);
+      let delay = 0;
+      for (let response of responses) {
+        this.sendMessage(response, delay * 2000);
+        delay++;
+      }
+    } else {
+      //console.log('NOTARRAY RESPONSE:',responses);
+      this.sendMessage(responses);
+    }
+
+
+  }
+
+  async recordSave(payloadRaw){
+
+    let parseInfo = function(payload){
+      let p = JSON.parse(payload); 
+      return p;
+    }
+
+    let parsed = await parseInfo(payloadRaw);
+
+    let questions =[{question:"Do you see a Ramp at the entrance", review:"ramp_entrance1"},
+    {question:"Does the place have Braile signage or menus?", review:"braile_signs2"},
+    {question:"Is the restroom in the first floor?", review:"restroom_floor3"}]
+
+    let payload = parsed.payload;
+    let placeName = parsed.placeName;
+    let placeId = parsed.placeId;
+    let placeAddress = parsed.placeAddress;
+    let review = parsed.review;
+    let value = parsed.value;
+    let item = parsed.item;
+
+    console.log("+++++++++++++ITEM COUNT",parsed.item)
+    console.log("+++++++++++++QUESTIONS",questions)
+
+
+    let newPayload;
+    if(questions[item]){
+      newPayload = {payload, item: item+1, question:questions[item].question, review:questions[item].review, placeName, placeAddress, placeId }
+    }else{
+      newPayload={payload:"RECORD_DEFAULT", placeName, placeAddress, placeId}
+      payload = "RECORD_THANKS";
+    }
+
+        //DIFFERENT
+        var input = {placeId, placeName, placeAddress, review, value};
+        console.log("[STEP 65A]:",input)
+
+        var mutation = `mutation CreateReview(
+          $input: CreateReviewInput!
+          $condition: ModelReviewConditionInput
+        ) {
+          createReview(input: $input, condition: $condition) {
+            id
+            placeId
+            placeAddress
+            placeStatus
+            placeName
+            review
+            displayName
+            degree
+            value
+            status
+            createdAt
+            createdBy
+            updatedAt
+          }
+        }`;
+
+      try {
+        const apiResponse = await fetch(
+          config.crudUrl, 
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-api-key':config.crudKey,
+              //'Accept': 'application/json',
+            },
+            body: JSON.stringify({
+              query: mutation,
+              variables:{input},
+            })
+          }
+        );
+
+        const json = await apiResponse.json();
+        console.log("[STEP 65B]:",json)
+       
+        let record = new Record(this.user, this.webhookEvent);
+        //MODIFIED
+        let responses = record.handlePayload(payload, JSON.stringify(newPayload));
+        
+
+        //This is going
+
+        if (Array.isArray(responses)) {
+          //console.log('ARRAY RESPONSE:',responses);
+          let delay = 0;
+          for (let response of responses) {
+            this.sendMessage(response, delay * 2000);
+            delay++;
+          }
+        } else {
+          //console.log('NOTARRAY RESPONSE:',responses);
+          this.sendMessage(responses);
+        }
 
         console.log('WRITE API ANSWER',JSON.stringify(json))
         return json;
@@ -212,6 +358,11 @@ module.exports = class Receive {
       } catch (error) {
         console.log('WRITE API ERROR',error);
       }
+   
+  }
+
+  async recordCheck(){
+    console.log("Record Check here"); 
    
   }
 
@@ -355,7 +506,7 @@ module.exports = class Receive {
       // Get the payload of the postback
       payload = postback.payload;
     }
-    return this.handlePayload(payload.toUpperCase());
+    return this.handlePayload(payload);
   }
 
   // Handles referral events
@@ -387,12 +538,26 @@ module.exports = class Receive {
     } else if (payload.includes("LOCATION")) {
       let location = new Location(this.user, this.webhookEvent);
       response = location.handlePayload(payload);
-    } else if (payload.includes("RECORD")) {
-      // let record = new Record(this.user, this.webhookEvent);
-      // response = record.handlePayload(payload);
-      console.log('+:38+');
+      //This is catching a massive stringifiedblob
+    } else if (payload.includes("STARTPLACE")) {
+
+      console.log('[STEP 55]:', payload);
       this.recordByPlace(payload);
 
+    } else if (payload.includes("RECORD_QUESTION")) {
+
+      console.log('[STEP 61]:', payload);
+      this.recordQuestion(payload);
+
+    } else if (payload.includes("RECORD_SAVE")) {
+
+      console.log('[STEP 64]:', payload);
+      this.recordSave(payload);
+
+    } else if (payload.includes("RECORD")) {
+      let record = new Record(this.user, this.webhookEvent);
+      response = record.handlePayload(payload);
+      
     } else if (payload.includes("CARE")) {
       let care = new Care(this.user, this.webhookEvent);
       response = care.handlePayload(payload);
@@ -463,35 +628,40 @@ module.exports = class Receive {
     GraphAPi.callSendAPI(requestBody);
   }
 
-  sendMessage(response, delay = 0) {
+  sendMessage(response=[], delay = 0) {
     console.log("sendMessageHere:",response)
     // Check if there is delay in the response
-    if ("delay" in response) {
-      delay = response["delay"];
-      delete response["delay"];
-    }
 
-    // Construct the message body
-    let requestBody = {
-      recipient: {
-        id: this.user.psid
-      },
-      message: response
-    };
+    
+      if ("delay" in response) {
+        delay = response["delay"];
+        delete response["delay"];
+      }
 
-    // Check if there is persona id in the response
-    if ("persona_id" in response) {
-      let persona_id = response["persona_id"];
-      delete response["persona_id"];
-
-      requestBody = {
+        // Construct the message body
+      let requestBody = {
         recipient: {
           id: this.user.psid
         },
-        message: response,
-        persona_id: persona_id
+        message: response
       };
-    }
+
+      // Check if there is persona id in the response
+      if ("persona_id" in response) {
+        let persona_id = response["persona_id"];
+        delete response["persona_id"];
+
+        requestBody = {
+          recipient: {
+            id: this.user.psid
+          },
+          message: response,
+          persona_id: persona_id
+        };
+      }
+
+    
+    
 
     setTimeout(() => GraphAPi.callSendAPI(requestBody), delay);
   }
