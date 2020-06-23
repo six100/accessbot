@@ -264,9 +264,9 @@ module.exports = class Receive {
 
     let parsed = await parseInfo(payloadRaw);
 
-    let questions =[{question:"Do you see a Ramp at the entrance", review:"ramp_entrance1"},
-    {question:"Does the place have Braile signage or menus?", review:"braile_signs2"},
-    {question:"Is the restroom in the first floor?", review:"restroom_floor3"}]
+    let questions =[{question:"Do you need a ramp to access the place", review:"mobility_ramp_needed"},
+    {question:"Is there a ramp to access the place?", review:"mobility_ramp"},
+    {question:"Can you easily fit a wheelchair through the door?", review:"wheelchair_main_entrance"}]
 
     let payload = parsed.payload;
     let placeName = parsed.placeName;
@@ -606,6 +606,10 @@ module.exports = class Receive {
       {
         title: i18n.__("menu.check"),
         payload: "LOCATION_CHECK"
+      },
+      {
+        title:"X",
+        payload: "LOCATION_CLEAR"
       }
       // ,
       // {

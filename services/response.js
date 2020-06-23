@@ -264,6 +264,11 @@ module.exports = class Response {
         title: i18n.__("menu.check"),
         payload: "LOCATION_CHECK"
       },
+      {
+        title:"X",
+        payload: "LOCATION_CLEAR"
+      }
+      
       // {
       //   title: "Show image",
       //   payload: "LOCATION_IMAGE"
