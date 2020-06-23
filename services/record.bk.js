@@ -9,39 +9,69 @@ const Response = require("./response"),
   
 
 module.exports = class Record {
-  constructor(user, webhookEvent, details) {
+  constructor(user, webhookEvent) {
     this.user = user;
     this.webhookEvent = webhookEvent;
+    this.stringPayload = stringPayload;
     
   }
 
 
-  handlePayload(payload, details){
-     
-    let parsed;
-    let response;
+  async unpackPayload(payload){
 
-    try {
-      parsed = JSON.parse(details);  
-      console.log("[STEP 59]:",details);
-      //action = parsed.payload;
-
-    } catch (ex) {
-      console.log("[STEP 59 ERROR]:");
-      console.error(ex);
+    //The function that turns a stringified payload to an object
+    let parseInfo = function(payload){
+      let parsed = JSON.parse(payload); 
+      return parsed;
     }
-    
 
-    switch (payload) {
+    let parsedReady = await parseInfo(payload);
+    return parsedReady
+
+  }
+
+  handlePayload(payloadToParse){
+    
+     let parsed = this.unpackPayload(payloadToParse);
+     
+     if(parsed.payload){
+      return this.handleCases(parsed);
+     }
+     
+  }
+
+  handleCases(parsed){
+    let response;
+    console.log("+++handleCases",parsed);
+    //let message = this.webhookEvent.message.text.trim().toLowerCase();
+
+    //Check Business G-Places type
+    let checkType = (a, toCheck)=>{
+      let f = a.find(e => e === toCheck);
+      return f == toCheck;
+    };
+
+    //1. READY Define location and acquire place ID (READY)
+        //1.2 READY A new component called 'record' that handle the SWITCH statement a little different.(it unpacks payload, extract action)
+        //2. 'QuickReply' displays the option for : REVIEW | SHOW ACCESSIBILITY (carry ID)
+        //2.1 Create logic to choose between 3 possible Accessibility Reports: Ramp, Braile, Restroom (QuickReply) (carry ID)
+        //2.2 Choose if True or False (QuickReply) (carry ID)
+        //3. Selection will trigger payload record.handlePayload() and will receive the stringified Payload
+        //4. After unpacking stringified payload, select Action (REPORT)
+        //5. Extract Name, id, and thing to report and trigger mutation.
+        //6. Get Callback (or await) for it and show final message "Your info was recorded", show initial Menu
+        
+
+    switch (parsed.payload) {
 
       case "RECORD_WELCOME":
           console.log("+++++ THIS IS RECORD_VISIT FROM record.js");
 
-          if(parsed.placeName){response = [
+          if(parsed.name){response = [
             Response.genGenericTemplate(
               `${config.shopUrl}/images/demo/${i18n.__("demo.image")}`,
-              `${parsed.placeName ? parsed.placeName : 'unknown'}`,
-              `${parsed.placeAddress  ? parsed.placeAddress : 'unknown'}`,
+              `${parsed.name ? parsed.name : 'Bonitaa Restaurant'}`,
+              `${parsed.address  ? parsed.address : '123 2nd Ave.'}`,
               [Response.genPostbackButton(i18n.__("location.showAmenities"), "LOCATION_AMENITIES"),
               Response.genPostbackButton("REPORT ACCESSIBILITY", "LOCATION_AMENITIES"),
               Response.genPostbackButton("CHECK ACCESSIBILITY", "LOCATION_AMENITIES"),

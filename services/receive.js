@@ -147,22 +147,20 @@ module.exports = class Receive {
       });
   }
   
-  async recordByPlace(payloadToParse){
+  async recordByPlace(payloadRaw){
 
     let parseInfo = function(payload){
       let parsed = JSON.parse(payload); // this is how you parse a string into JSON 
-      console.log("++++++STEP6B:",parsed);
       return parsed;
     }
 
-    let parsedReady = await parseInfo(payloadToParse);
+    let payloadParsed = await parseInfo(payloadRaw);
+    console.log("[STEP 56]:",payloadParsed);
 
-    console.log('+++ recordByPlace()')
-    console.log(parsedReady)
 
-      let placeName = parsedReady.name;
-      let placeId = parsedReady.id;
-      let placeAddress = "23 elm street";
+      let placeName = payloadParsed.placeName;
+      let placeId = payloadParsed.placeId;
+      let placeAddress = payloadParsed.placeAddress;
 
         var input = {placeId, placeName, placeAddress};
       
@@ -188,12 +186,6 @@ module.exports = class Receive {
           }
         }`;
 
-        var mutation2 = `mutation CreateMessage($placeId: ID!, $placeName: String ){createMessage(id: 1234, content: $placeName, conversationId: $placeId, createdAt:"12345" ) {
-            content
-            createdAt
-          }
-        }`;
-
       try {
         const apiResponse = await fetch(
           config.crudUrl, 
@@ -212,9 +204,14 @@ module.exports = class Receive {
         );
 
         const json = await apiResponse.json();
+        console.log("[STEP 57]:",json)
 
-        let location = new Location(this.user, this.webhookEvent);
-        let responses = location.handlePayload(payloadToParse);
+        console.log("[STEP 58]:",payloadRaw)
+        let record = new Record(this.user, this.webhookEvent);
+        let responses = record.handlePayload("RECORD_WELCOME", payloadRaw);
+        
+
+        //This is going
 
         if (Array.isArray(responses)) {
           //console.log('ARRAY RESPONSE:',responses);
@@ -227,8 +224,6 @@ module.exports = class Receive {
           //console.log('NOTARRAY RESPONSE:',responses);
           this.sendMessage(responses);
         }
-
-
 
         console.log('WRITE API ANSWER',JSON.stringify(json))
         return json;
@@ -411,11 +406,14 @@ module.exports = class Receive {
     } else if (payload.includes("LOCATION")) {
       let location = new Location(this.user, this.webhookEvent);
       response = location.handlePayload(payload);
-    } else if (payload.includes("RECORD")) {
-      // let record = new Record(this.user, this.webhookEvent);
-      // response = record.handlePayload(payload);
-      console.log('+:38+');
+      //This is catching a massive stringifiedblob
+    } else if (payload.includes("STARTPLACE")) {
+      console.log('[STEP 55]:', payload);
       this.recordByPlace(payload);
+
+    } else if (payload.includes("RECORD")) {
+      let record = new Record(this.user, this.webhookEvent);
+      response = record.handlePayload(payload);
 
     } else if (payload.includes("CARE")) {
       let care = new Care(this.user, this.webhookEvent);

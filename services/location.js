@@ -20,14 +20,12 @@ module.exports = class Location {
 
   handlePayload(payload) {
 
-    let action = payload;
-    console.log("+++++STEP5:",payload);
-    
+    let action = payload;    
     let parsed;
    
 
     try {
-      parsed = JSON.parse(payload); // this is how you parse a string into JSON 
+      parsed = JSON.parse(payload);  
       console.log("++++++STEP6:",parsed);
       //action = parsed.payload;
 
@@ -36,9 +34,10 @@ module.exports = class Location {
       console.error(ex);
     }
     
+
+    
     let response;
-    let placeName;
-    let placeDescription;
+    
 
     let message = this.webhookEvent.message.text.trim().toLowerCase();
 
@@ -167,11 +166,11 @@ module.exports = class Location {
           Response.genQuickReply("Is 13 Elm Street your current location?", [
             {
               //TODO: This address needs to come from the device.
-              title:"Yes it is",
+              title:"Yes",
               payload: "LOCATION_NEARBY"
             },
             {
-              title:"No, is different",
+              title:"No",
               payload: "LOCATION_UNKNOWN"
             }
           ])];
@@ -197,10 +196,11 @@ module.exports = class Location {
           }else if(apiResults.length == 1){
 
             //Passing Context to next message
-            let details= {payload:'RECORD_VISIT', name: apiResults[0].name , address: apiResults[0].formatted_address ,id: apiResults[0].id };
+            let details= {payload:'STARTPLACE', placeName: apiResults[0].name , placeAddress: apiResults[0].formatted_address ,placeId: apiResults[0].id };
             ////let details= {payload:'LOCATION_CHOSEN', name: apiResults[0].name , address: apiResults[0].formatted_address ,id: apiResults[0].id };
 
             details= JSON.stringify(details);
+            console.log("[STEP 54]:",details)
 
             response =[
               Response.genText(`I found a place called "${apiResults[0].name}" at ${apiResults[0].formatted_address}`),
@@ -228,7 +228,7 @@ module.exports = class Location {
                 console.log(apiResults[i].name);
 
                 //Passing Context to next message (Unfortunately we need to do it this way)
-                let details= {payload:'RECORD_VISIT', name: apiResults[i].name , address: apiResults[i].formatted_address ,id: apiResults[i].id };
+                let details= {payload:'STARTPLACE', placeName: apiResults[i].name , placeAddress: apiResults[i].formatted_address ,placeId: apiResults[i].id };
                 console.log("+STEP1:", details );
                 details= JSON.stringify(details);
                 console.log("++STEP2:", details );
@@ -494,14 +494,24 @@ module.exports = class Location {
         
         
         default: 
+
+        //UnStringify payload
+
+        //Passing Context to next message
+        let details= {payload:'RECORD_REPORT', name: "placeNAme" , address: "placeAddress" ,id: "placeId" };
+        ////let details= {payload:'LOCATION_CHOSEN', name: apiResults[0].name , address: apiResults[0].formatted_address ,id: apiResults[0].id };
+
+        details= JSON.stringify(details);
+        //create new payload
+
         if(parsed.name){response = [
             Response.genGenericTemplate(
               `${config.shopUrl}/images/demo/${i18n.__("demo.image")}`,
               `${parsed.name ? parsed.name : 'Bonitaa Restaurant'}`,
               `${parsed.address  ? parsed.address : '123 2nd Ave.'}`,
               [Response.genPostbackButton(i18n.__("location.showAmenities"), "LOCATION_AMENITIES"),
-              Response.genPostbackButton("Show Restroom", "LOCATION_AMENITIES"),
-              Response.genPostbackButton("Take me there!", "LOCATION_AMENITIES"),
+              Response.genPostbackButton("REPORT ACCESSIBILITY", details),
+              Response.genPostbackButton("CHECK ACCESSIBILITY", details),
             ]
             )
           ]
