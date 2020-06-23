@@ -374,8 +374,6 @@ module.exports = class Receive {
 
     let parsed = await parseInfo(payloadRaw);
     
-    let payload = parsed.payload;
-
     let placeId = parsed.placeId;
 
     let limit = 100;
@@ -420,10 +418,10 @@ module.exports = class Receive {
         const json = await apiResponse.json();
         console.log("[STEP ??]:",json)
        
-        let record = new Record(this.user, this.webhookEvent);
+        let record = new Record(this.user, this.webhookEvent, json);
         //MODIFIED
 
-        let responses = record.handlePayload("RECORD_SHOW", payload);
+        let responses = record.handlePayload(parsed.payload, payloadRaw);
         
 
         //This is going

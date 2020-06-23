@@ -9,9 +9,10 @@ const Response = require("./response"),
   
 
 module.exports = class Record {
-  constructor(user, webhookEvent, details) {
+  constructor(user, webhookEvent, apiResponse) {
     this.user = user;
     this.webhookEvent = webhookEvent;
+    this.apiResponse = apiResponse;
     
   }
 
@@ -105,13 +106,32 @@ module.exports = class Record {
 
       case "RECORD_CHECK":
 
-          console.log("++++RECORD_CHECK",parsed);
-          response = [
-            Response.genText("Record Check"),
-          ]
           
-        //action:"list"
-        //placeId: 123
+          console.log("+++RECORD_CHECK :", this.apiResponse.data.listReviews.items)
+          let items = this.apiResponse.data.listReviews.items;
+          
+          const amenities =[
+            Response.genText(`This is what we found about "${parsed.placeName}"`),
+          ];
+          //1. TO DISPLAY QUICK BUTTONS
+
+          
+          // items.map((keyName, i) => (
+          //   amenities.push({"title": `${keyName.value == 'true'? '✅' : '❌'} ${keyName.review}`, "payload": "RECORD-XYZ"}
+          // )));
+          // response = [
+          //   Response.genText("This is what we found"),
+          //   Response.genQuickReply("in this place", amenities)
+          // ]
+
+
+          //2. TO DISPLAY REGULAR MESSAGES 
+
+          items.map((keyName, i) => (
+            amenities.push(Response.genText(`${keyName.value == 'true'? '✅' : '❌'} ${keyName.review}`))
+          ));
+          
+          response = amenities;
 
       break;
 
