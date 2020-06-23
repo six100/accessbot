@@ -34,9 +34,6 @@ module.exports = {
   crudKey: process.env.CRUD_KEY,
   geoKey: process.env.GEO_KEY,
 
-  // WIT Token
-  witToken: process.env.WIT_TOKEN,
-
   // URL of your app domain
   appUrl: process.env.APP_URL,
 

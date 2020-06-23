@@ -414,9 +414,9 @@ module.exports = class Receive {
       
 
     } else if((nlpIntent ==='declare_location' && nlpIntent.confidence > 0.8) || this.webhookEvent.message.text.includes("loca")){
-      console.log('BY DECLARED LOCATION');
-      let location = new Location(this.user, this.webhookEvent);
-      response = location.handlePayload("LOCATION_SEARCH");
+      
+      this.getPlaceByText(message);
+      response;
       
 
     }else if((nlpLocation.suggested && nlpLocation.confidence > 0.8)){
