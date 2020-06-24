@@ -45,10 +45,10 @@ module.exports = class Record {
               `${parsed.placeName ? parsed.placeName : 'unknown'}`,
               `${parsed.placeAddress  ? parsed.placeAddress : 'unknown'}`,
               [Response.genPostbackButton("Report Accessibility", 
-                JSON.stringify({payload:"RECORD_SAVE", item:0, placeName:parsed.placeName, placeAddress:parsed.placeAddress, placeId:parsed.placeId})
+                JSON.stringify({payload:"RECORD_SAVE", placeName:parsed.placeName, placeAddress:parsed.placeAddress, placeId:parsed.placeId})
                 ),
                 Response.genPostbackButton("Check Accessibility", 
-                JSON.stringify({payload:"RECORD_CHECK", item:0, placeName:parsed.placeName, placeAddress:parsed.placeAddress, placeId:parsed.placeId})
+                JSON.stringify({payload:"RECORD_CHECK", placeName:parsed.placeName, placeAddress:parsed.placeAddress, placeId:parsed.placeId})
                 )
               ]
             )

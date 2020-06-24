@@ -151,8 +151,9 @@ module.exports = class Receive {
       let placeName = payloadParsed.placeName;
       let placeId = payloadParsed.placeId;
       let placeAddress = payloadParsed.placeAddress;
+      let status = "110";
 
-        var input = {placeId, placeName, placeAddress};
+        var input = {placeId, placeName, placeAddress, status};
 
         var mutation = `mutation CreateReview(
           $input: CreateReviewInput!
@@ -214,7 +215,7 @@ module.exports = class Receive {
           this.sendMessage(responses);
         }
 
-        console.log('WRITE API ANSWER',JSON.stringify(json))
+        console.log('STEP 58.1 WRITE API ANSWER (RecordByPlace)',JSON.stringify(json))
         return json;
         
       } catch (error) {
@@ -223,37 +224,37 @@ module.exports = class Receive {
    
   }
 
-  async recordQuestion(payloadRaw){
+  // async recordQuestion(payloadRaw){
 
-    //Here you should load  previous User Questions
+  //   //Here you should load  previous User Questions
 
-    let parseInfo = function(payload){
-      let parsed = JSON.parse(payload); 
-      return parsed;
-    }
-    let payloadParsed = await parseInfo(payloadRaw);
-    console.log("STEP 62",payloadParsed);
+  //   let parseInfo = function(payload){
+  //     let parsed = JSON.parse(payload); 
+  //     return parsed;
+  //   }
+  //   let payloadParsed = await parseInfo(payloadRaw);
+  //   console.log("STEP 62",payloadParsed);
 
-    let record = new Record(this.user, this.webhookEvent);
-    let responses = record.handlePayload("RECORD_QUESTION", payloadRaw);
+  //   let record = new Record(this.user, this.webhookEvent);
+  //   let responses = record.handlePayload("RECORD_QUESTION", payloadRaw);
 
-    console.log("[STEP 64]", responses);
-    console.log("[STEP 64B]", JSON.stringify(responses));
+  //   console.log("[STEP 64]", responses);
+  //   console.log("[STEP 64B]", JSON.stringify(responses));
     
-    if (Array.isArray(responses)) {
-      //console.log('ARRAY RESPONSE:',responses);
-      let delay = 0;
-      for (let response of responses) {
-        this.sendMessage(response, delay * 2000);
-        delay++;
-      }
-    } else {
-      //console.log('NOTARRAY RESPONSE:',responses);
-      this.sendMessage(responses);
-    }
+  //   if (Array.isArray(responses)) {
+  //     //console.log('ARRAY RESPONSE:',responses);
+  //     let delay = 0;
+  //     for (let response of responses) {
+  //       this.sendMessage(response, delay * 2000);
+  //       delay++;
+  //     }
+  //   } else {
+  //     //console.log('NOTARRAY RESPONSE:',responses);
+  //     this.sendMessage(responses);
+  //   }
 
 
-  }
+  // }
 
   async recordSave(payloadRaw){
 
@@ -263,33 +264,51 @@ module.exports = class Receive {
     }
 
     let parsed = await parseInfo(payloadRaw);
+    console.log("[STEP 101]:",parsed)
 
-    let questions =[{question:"Do you need a ramp to access the place", review:"mobility_ramp_needed"},
-    {question:"Is there a ramp to access the place?", review:"mobility_ramp"},
-    {question:"Can you easily fit a wheelchair through the door?", review:"wheelchair_main_entrance"}]
+
+    let questions =[{question:"0.Do you need a ramp to access the place", review:"mobility_ramp_needed1"},
+    {question:"1.Is there a ramp to access the place?", review:"mobility_ramp2"},
+    {question:"2.Can you easily fit a wheelchair through the door?", review:"wheelchair_main_entrance3"}]
 
     let payload = parsed.payload;
     let placeName = parsed.placeName;
     let placeId = parsed.placeId;
     let placeAddress = parsed.placeAddress;
-    let review = parsed.review;
+    let review = `${parsed.review}(${parsed.item})`;
     let value = parsed.value;
-    let item = parsed.item;
+    let item = parsed.item
     //100 == visible
     let status = "100";
 
    
     let newPayload;
-    if(questions[item]){
-      newPayload = {payload, item: item+1, question:questions[item].question, review:questions[item].review, placeName, placeAddress, placeId }
+    let input ;
+    console.log("[STEP 150.B]:",item)
+
+    if(!item){
+      //If item doesn't exist, then start the count in 0
+      console.log("THERES NO ITEM")
+      newPayload = {payload, item:1, question:questions[0].question, review:questions[0].review, placeName, placeAddress, placeId }
+
+      input = {placeId, placeName, placeAddress, status:'111'};
+      
     }else{
-      newPayload={payload:"RECORD_DEFAULT", placeName, placeAddress, placeId}
-      payload = "RECORD_THANKS";
+
+      if(questions[item]){
+        newPayload = {payload, item: item+1, question:questions[item].question, review:questions[item].review, placeName, placeAddress, placeId }
+        payload = "RECORD_SAVE";
+      }else{
+        newPayload={payload:"RECORD_DEFAULT", placeName, placeAddress, placeId}
+        payload = "RECORD_THANKS";
+      }
+
+      input = {placeId, placeName, placeAddress, review, value, status};
     }
 
-        //DIFFERENT
-        var input = {placeId, placeName, placeAddress, review, value, status};
-        console.log("[STEP 65A]:",input)
+    
+        console.log("[STEP 150.A]:",newPayload)
+        console.log("[STEP 150.B]:",input)
 
         var mutation = `mutation CreateReview(
           $input: CreateReviewInput!
@@ -311,7 +330,8 @@ module.exports = class Receive {
             updatedAt
           }
         }`;
-
+    
+        
       try {
         const apiResponse = await fetch(
           config.crudUrl, 
@@ -622,10 +642,10 @@ module.exports = class Receive {
       console.log('[STEP 55]:', payload);
       this.recordByPlace(payload);
 
-    } else if (payload.includes("RECORD_QUESTION")) {
+    // } else if (payload.includes("RECORD_QUESTION")) {
 
-      console.log('[STEP 61]:', payload);
-      this.recordQuestion(payload);
+    //   console.log('[STEP 61]:', payload);
+    //   this.recordQuestion(payload);
 
     } else if (payload.includes("RECORD_SAVE")) {
 
