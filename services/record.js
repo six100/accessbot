@@ -16,6 +16,17 @@ module.exports = class Record {
     
   }
 
+  friendlyName(code){
+    let name
+    switch(code){
+      case 'mobility_unobstructed' : name = "Unobstructed access"; break;
+      case 'mobility_ramp_entrance' : name = "Accessible ramp available"; break;
+      case 'restroom_same_floor' : name = "Restroom same floor as entrance"; break;
+    }
+
+    return name;
+  }
+
 
   handlePayload(payload, details){
      
@@ -31,6 +42,7 @@ module.exports = class Record {
       console.log("[STEP 59 ERROR]:");
       console.error(ex);
     }
+    
 
     switch (payload) {
 
@@ -104,7 +116,6 @@ module.exports = class Record {
 
       case "RECORD_CHECK":
 
-          
           console.log("+++RECORD_CHECK :", this.apiResponse.data.listReviews.items)
           let items = this.apiResponse.data.listReviews.items;
           
@@ -124,23 +135,10 @@ module.exports = class Record {
                 )
             ];
           }
-          
 
-          //1. TO DISPLAY QUICK BUTTONS
-          
-          // items.map((keyName, i) => (
-          //   amenities.push({"title": `${keyName.value == 'true'? '✅' : '❌'} ${keyName.review}`, "payload": "RECORD-XYZ"}
-          // )));
-          // response = [
-          //   Response.genText("This is what we found"),
-          //   Response.genQuickReply("in this place", amenities)
-          // ]
-
-
-          //2. TO DISPLAY REGULAR MESSAGES 
 
           items.map((keyName, i) => (
-            amenities.push(Response.genText(`${keyName.value == 'true'? '✅' : '❌'} ${keyName.review}`))
+            amenities.push(Response.genText(`${keyName.value == 'true'? '✅' : '❌'} ${this.friendlyName(keyName.review)}`))
           ));
           
           response = amenities;
