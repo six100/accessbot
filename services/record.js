@@ -83,7 +83,7 @@ module.exports = class Record {
           if(parsed.item == 2){
            //TODO: DYNAMICALLY LOAD HELP
             response = [
-              Response.genText("Based on this diagram"),
+              Response.genText("Based on the following diagram:"),
               Response.genImageById(`259136198695181`),
               Response.genQuickReply(parsed.question, [
                 {

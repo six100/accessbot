@@ -312,6 +312,15 @@ module.exports = class Location {
         ];
         break;
         
+      case "LOCATION_BRAILE":
+        //Todo: Save User-generated questions 
+        response = [
+          //TODO: This should be an utterance by the user, not a hardwired QuickReply
+          Response.genText("Ok thanks, We'll be contacting the business owner"),
+          Response.genText(`another question?`),
+        ];
+        break;
+
 
       case "LOCATION_IMAGE_TEST":
         response = [

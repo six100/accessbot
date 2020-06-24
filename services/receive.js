@@ -271,7 +271,7 @@ module.exports = class Receive {
 
 
     let questions =[{question:"Is the place accessible without ramp?", review:"mobility_ramp1"},
-    {question:"Is the entrance wide enough for a wheelchair", review:"mobility_entrance1"},
+    {question:"Is the entrance wide enough for a wheelchair?", review:"mobility_entrance1"},
     {question:"Is there a button that automatically opens the door?", review:"mobility_entrance2"},
     {question:"Is the restroom in the same floor as the entrance?", review:"mobility_restroom1"}
   ]
@@ -482,6 +482,8 @@ module.exports = class Receive {
     let message = this.webhookEvent.message.text.trim().toLowerCase();
     let response;
 
+    console.log(nlpIntent);
+
     //GREETINGS
     if ((greeting && greeting.confidence > 0.8) || message.includes("start over")) {
       response = Response.genNuxMessage(this.user);
@@ -522,6 +524,11 @@ module.exports = class Receive {
       this.getPlaceByText(message);
       response;
       
+    } else if((nlpIntent ==='request_braile' && nlpIntent.confidence > 0.8) || this.webhookEvent.message.text.includes("braile")){
+      
+      console.log("SELECTED: 527");
+      let location = new Location(this.user, this.webhookEvent);
+      response = location.handlePayload("LOCATION_BRAILE");
 
     }else if((nlpLocation.suggested && nlpLocation.confidence > 0.8)){
       
