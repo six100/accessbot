@@ -257,36 +257,12 @@ module.exports = class Response {
 
     let curation = this.genQuickReply(i18n.__("get_started.help"), [
       {
-        title: i18n.__("menu.review"),
-        payload: "LOCATION_REVIEW"
-      },
-      {
-        title: i18n.__("menu.check"),
-        payload: "LOCATION_CHECK"
-      },
-      {
-        title:"X",
-        payload: "LOCATION_CLEAR"
+        title: "Show me an example",
+        payload: "LOCATION_START_EXAMPLE"
       }
-      
-      // {
-      //   title: "Show image",
-      //   payload: "LOCATION_IMAGE"
-      // },
-      // ,
-      // {
-      //   title: "suggestion v2.3",
-      //   payload: "CURATION"
-      // },
-      // {
-      //   title: "coupon",
-      //   payload: "SUMMER_COUPON"
-      // },
-      // {
-      //   title: i18n.__("menu.help"),
-      //   payload: "CARE_HELP"
-      // }
     ]);
+
+    
 
     return [welcome, guide, curation];
   }

@@ -52,9 +52,12 @@ module.exports = class Receive {
     } catch (error) {
       console.error("++2.10 ERROR:",error);
       responses = {
-        text: `An error has occured: '${error}'. We have been notified and \
-        will fix the issue shortly!`
+        text: `Sorry, can you please specify the place you are interested in, you can say things like "I'm at Chicos Pizza"`
       };
+      // responses = {
+      //   text: `An error has occured: '${error}'. We have been notified and \
+      //   will fix the issue shortly!`
+      // };
     }
 
     if (Array.isArray(responses)) {
@@ -267,15 +270,18 @@ module.exports = class Receive {
     console.log("[STEP 101]:",parsed)
 
 
-    let questions =[{question:"0.Do you need a ramp to access the place", review:"mobility_ramp_needed1"},
-    {question:"1.Is there a ramp to access the place?", review:"mobility_ramp2"},
-    {question:"2.Can you easily fit a wheelchair through the door?", review:"wheelchair_main_entrance3"}]
+    let questions =[{question:"Can you tell me if the place can be accessed on a wheelchair?", review:"mobility_entrance1"},
+    {question:"In case of stairs, Do you see a ramp?", review:"mobility_ramp1"},
+    {question:"Is there a button that automatically opens the door?", review:"mobility_entrance2"},
+    {question:"Is the restroom in the same floor as the entrance?", review:"mobility_restroom1"}
+  ]
+    
 
     let payload = parsed.payload;
     let placeName = parsed.placeName;
     let placeId = parsed.placeId;
     let placeAddress = parsed.placeAddress;
-    let review = `${parsed.review}(${parsed.item})`;
+    let review = parsed.review;
     let value = parsed.value;
     let item = parsed.item
     //100 == visible
@@ -702,25 +708,12 @@ module.exports = class Receive {
 
     let response = Response.genQuickReply(welcomeMessage, [
       {
-        title: i18n.__("menu.review"),
-        payload: "LOCATION_REVIEW"
-      },
-      {
-        title: i18n.__("menu.check"),
-        payload: "LOCATION_CHECK"
-      },
-      {
-        title:"X",
-        payload: "LOCATION_CLEAR"
+        title: "An example?",
+        payload: "LOCATION_START_EXAMPLE"
       }
-      // ,
       // {
-      //   title: "curation",
-      //   payload: "CURATION"
-      // },
-      // {
-      //   title: i18n.__("menu.help"),
-      //   payload: "CARE_HELP"
+      //   title:"X",
+      //   payload: "LOCATION_CLEAR"
       // }
     ]);
 

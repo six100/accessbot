@@ -15,8 +15,8 @@
 	},
 	"get_started": {
 		"welcome": "Hi {{userFirstName}}! Welcome to Accessbot",
-		"guidance": "I can find accessible places in your area.",
-		"help": "What do you want to do?"
+		"guidance": "I can find accessible places to go",
+		"help": "Do you have a place in mind?"
 	},
 	"leadgen": {
 		"promo": "Hi {{userFirstName}}, message here",

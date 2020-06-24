@@ -19,9 +19,11 @@ module.exports = class Record {
   friendlyName(code){
     let name
     switch(code){
-      case 'mobility_unobstructed' : name = "Unobstructed access"; break;
-      case 'mobility_ramp_entrance' : name = "Accessible ramp available"; break;
-      case 'restroom_same_floor' : name = "Restroom same floor as entrance"; break;
+      case 'mobility_entrance1' : name = "Unobstructed access"; break;
+      case 'mobility_ramp1' : name = "Accessible ramp available"; break;
+      case 'mobility_entrance2' : name = "Entrance accessible with button"; break;
+      case 'mobility_restroom1' : name = "Restroom same floor as entrance"; break;
+      default: name = code;
     }
 
     return name;
@@ -100,6 +102,7 @@ module.exports = class Record {
           
           response = [
             Response.genText("Thanks for your answers"),
+            Response.genImageById(`2728490717387755`),
             Response.genQuickReply("Next steps:", [
               {
                 title:"Review different place",
@@ -124,26 +127,51 @@ module.exports = class Record {
 
           if(items.length >=1){
             amenities =[
-              Response.genText(`This is what we found about "${parsed.placeName}"`),
+              Response.genText(`This is what we found about "${parsed.placeName}" located at ${parsed.placeAddress}`),
             ];
+
+            items.map((keyName, i) => (
+              amenities.push(Response.genText(`${keyName.value == 'true'? '✅' : '❌'} ${this.friendlyName(keyName.review)}`))
+            ));
+  
+            amenities.push(
+            Response.genQuickReply("You can also check some photos or find nearby places.", [
+              {
+                title:"Show Restroom",
+                payload: "LOCATION_GALLERY"
+              },
+              {
+                title:"Directions",
+                payload: "LOCATION_MAP"
+              },
+              {
+                title:"Nearby places",
+                payload: "LOCATION_NEARBY"
+              },
+              
+            ]))
+
           }else{
             amenities =[
               Response.genText(`We couldn't find any accessibility information`),
-              Response.genText(`Do you want to review the accessibility of "${parsed.placeName}"`),
-              Response.genPostbackButton("YES", 
-                JSON.stringify({payload:"RECORD_SAVE", item:0, placeName:parsed.placeName, placeAddress:parsed.placeAddress, placeId:parsed.placeId})
-                )
-            ];
+              Response.genQuickReply(`Do you want to review accessibility for "${parsed.placeName}"`, [
+                {
+                  title: "Yes, let's do this",
+                  payload: JSON.stringify({payload:"RECORD_SAVE", item:0, placeName:parsed.placeName, placeAddress:parsed.placeAddress, placeId:parsed.placeId})
+                },
+                {
+                  title:"No",
+                  payload: "LOCATION_START"
+                }
+              ]),
+            ]
           }
-
-
-          items.map((keyName, i) => (
-            amenities.push(Response.genText(`${keyName.value == 'true'? '✅' : '❌'} ${this.friendlyName(keyName.review)}`))
-          ));
+          
           
           response = amenities;
 
       break;
+      
 
       case "RECORD_HELP":
 

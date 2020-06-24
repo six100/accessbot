@@ -283,6 +283,13 @@ module.exports = class Location {
           ];
         break;
 
+        case "LOCATION_START_EXAMPLE":
+        response = [
+          Response.genText("Just mention the place you are planning to go"),
+          Response.genText(`You can say something like: "Tell me about Trik Dog in Mission" or "I am at Super Duper in Downtown SF"`),
+          ];
+        break;
+
       case "LOCATION_REVIEW":
         response = Response.genQuickReply("Can you confirm this is your current location", [
             {
@@ -406,25 +413,13 @@ module.exports = class Location {
           //TODO: Replace For Place photos
           Response.genImageById(`662033577684034`),
           Response.genImageById(`257285178883552`),
-          
+         
           //Next steps
-          Response.genQuickReply("What else can I help you with?", [
+          Response.genQuickReply("Do you have an specific question about this place related to accessibility?", [
             {
-              title:"Show Accessibility",
-              payload: "LOCATION_AMENITIES"
-            },
-            {
-              title:"Show Map",
-              payload: "LOCATION_MAP"
-            },
-            {
-              title:"Nearby places",
-              payload: "LOCATION_NEARBY"
-            },
-            // {
-            //   title:"Ask question",
-            //   payload: "LOCATION_NEW_QUESTION"
-            // },
+              title:"Yes, Ask Question",
+              payload: "LOCATION_ASK"
+            }
           ])
         ];
         break;
@@ -445,6 +440,25 @@ module.exports = class Location {
           )
         ];
         break;
+
+        case "LOCATION_ASK":
+            response = [
+              Response.genText("What is your question?")
+            ]
+        break;
+
+        case "LOCATION_ASK_CONFIRMATION":
+            response = [
+              Response.genText("Ok gotcha, we'll try to contact the place directly (it might take a couple of days to get a response back)"),
+              Response.genQuickReply("Would you like to be notified when we get an answer to your question?", [
+                {
+                  title:"Yes, Ask Question",
+                  payload: "LOCATION_ASK"
+                }
+              ])
+            ]
+        break;
+
 
         case "LOCATION_CLEAR":
         response = [
