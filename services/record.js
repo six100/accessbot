@@ -78,23 +78,68 @@ module.exports = class Record {
           console.log('[STEP 64.2]:', details);
           console.log('[STEP 64.3]:', parsed);
 
+          
+
+          if(parsed.item == 2){
+           //TODO: DYNAMICALLY LOAD HELP
+            response = [
+              Response.genText("Based on this diagram"),
+              Response.genImageById(`259136198695181`),
+              Response.genQuickReply(parsed.question, [
+                {
+                  title:`Yes`,
+                  payload: JSON.stringify({payload:parsed.payload, item:parsed.item, review:parsed.review, value:"true", placeName:parsed.placeName, placeAddress:parsed.placeAddress, placeId:parsed.placeId})
+                },
+                {
+                  title:`No`,
+                  payload: JSON.stringify({payload:parsed.payload, item:parsed.item, review:parsed.review, value:"false", placeName:parsed.placeName, placeAddress:parsed.placeAddress, placeId:parsed.placeId})
+                },
+                // {
+                //   title:`Help me`,
+                //   payload: JSON.stringify({payload:"RECORD_HELP", help:2, placeName:parsed.placeName, placeAddress:parsed.placeAddress, placeId:parsed.placeId})
+                // }
+              ]),
+              
+            ]
+          }else{
+            response = [
+              Response.genQuickReply(parsed.question, [
+                {
+                  title:`Yes`,
+                  payload: JSON.stringify({payload:parsed.payload, item:parsed.item, review:parsed.review, value:"true", placeName:parsed.placeName, placeAddress:parsed.placeAddress, placeId:parsed.placeId})
+                },
+                {
+                  title:`No`,
+                  payload: JSON.stringify({payload:parsed.payload, item:parsed.item, review:parsed.review, value:"false", placeName:parsed.placeName, placeAddress:parsed.placeAddress, placeId:parsed.placeId})
+                },
+                // {
+                //   title:`Help me`,
+                //   payload: JSON.stringify({payload:"RECORD_HELP", help:2, placeName:parsed.placeName, placeAddress:parsed.placeAddress, placeId:parsed.placeId})
+                // }
+              ]),
+              
+            ]
+          };
+        
+
+      break;
+
+      case "RECORD_EXAMPLE":
+          
           response = [
-            Response.genQuickReply(parsed.question, [
+            Response.genText("To be sure"),
+            Response.genImageById(`2728490717387755`),
+            Response.genQuickReply("Next steps:", [
               {
-                title:`Yes`,
-                payload: JSON.stringify({payload:parsed.payload, item:parsed.item, review:parsed.review, value:"true", placeName:parsed.placeName, placeAddress:parsed.placeAddress, placeId:parsed.placeId})
+                title:"Review different place",
+                payload: "LOCATION_DEFAULT"
               },
               {
-                title:`No`,
-                payload: JSON.stringify({payload:parsed.payload, item:parsed.item, review:parsed.review, value:"false", placeName:parsed.placeName, placeAddress:parsed.placeAddress, placeId:parsed.placeId})
-              },
-              {
-                title:`Help me`,
-                payload: JSON.stringify({payload:"RECORD_HELP", help:2, placeName:parsed.placeName, placeAddress:parsed.placeAddress, placeId:parsed.placeId})
+                title:"Change Review of this place",
+                payload: "LOCATION_DEFAULT"
               }
             ])
           ]
-        
 
       break;
 
@@ -130,9 +175,10 @@ module.exports = class Record {
               Response.genText(`This is what we found about "${parsed.placeName}" located at ${parsed.placeAddress}`),
             ];
 
-            items.map((keyName, i) => (
+            items.map((keyName, i) => {
               amenities.push(Response.genText(`${keyName.value == 'true'? '✅' : '❌'} ${this.friendlyName(keyName.review)}`))
-            ));
+            });
+            
   
             amenities.push(
             Response.genQuickReply("You can also check some photos or find nearby places.", [

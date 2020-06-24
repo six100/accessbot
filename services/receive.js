@@ -270,8 +270,8 @@ module.exports = class Receive {
     console.log("[STEP 101]:",parsed)
 
 
-    let questions =[{question:"Can you tell me if the place can be accessed on a wheelchair?", review:"mobility_entrance1"},
-    {question:"In case of stairs, Do you see a ramp?", review:"mobility_ramp1"},
+    let questions =[{question:"Is the place accessible without ramp?", review:"mobility_ramp1"},
+    {question:"Is the entrance wide enough for a wheelchair", review:"mobility_entrance1"},
     {question:"Is there a button that automatically opens the door?", review:"mobility_entrance2"},
     {question:"Is the restroom in the same floor as the entrance?", review:"mobility_restroom1"}
   ]
