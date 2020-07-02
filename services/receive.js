@@ -299,6 +299,54 @@ module.exports = class Receive {
 
   }
 
+  async listQuestions(){
+    
+    let limit = 100;
+    let filter = {"status":{"eq" : "100"}};
+   
+      var query = `query ListQuestions(
+        $filter: ModelQuestionFilterInput
+        $limit: Int
+        $nextToken: String
+      ) {
+        listQuestions(filter: $filter, limit: $limit, nextToken: $nextToken) {
+          items {
+            id
+            question
+            createdAt
+            status
+          }
+          nextToken
+        }
+      }`;
+
+      try {
+        const apiResponse = await fetch(
+          config.crudUrl, 
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-api-key':config.crudKey,
+              'Accept': 'application/json',
+            },
+            body: JSON.stringify({
+              query: query,
+              variables:{filter, limit},
+            })
+          }
+        );
+
+        const json = await apiResponse.json();
+        console.log('LIST QUESTIONS API:',json);
+        return json;
+        
+      } catch (error) {
+        console.log('LIST QUESTIONS ERROR:',error);
+      }
+   
+  }
+
   async recordSave(payloadRaw){
 
     let parseInfo = function(payload){
@@ -309,14 +357,25 @@ module.exports = class Receive {
     let parsed = await parseInfo(payloadRaw);
     console.log("[STEP 101]:",parsed)
 
+    //0. Check in context if Questions for this place (or in general) have been asked already 
+    //1. Request Questions with status code 100 (Active)
+    //2. Save this questions in context (you don't want to ping the DB every iteration)
+    //2B. NO CONTEXT? Ping the DB every iteration
+    //3. Ask each questions until done.
 
-    let questions =[{question:"Is the place accessible without ramp?", review:"mobility_ramp1"},
-    {question:"Is the entrance wide enough for a wheelchair?", review:"mobility_entrance1"},
-    {question:"Is there a button that automatically opens the door?", review:"mobility_entrance2"},
-    {question:"Is the restroom in the same floor as the entrance?", review:"mobility_restroom1"}
-  ]
+    let questions;
+    let apiResponse = await this.listQuestions();
+    questions = apiResponse.data.listQuestions.items;
+
+    // questions =[{question:"Is the place accessible without ramp?", value:"mobility_ramp1"},
+    // {question:"Is the entrance wide enough for a wheelchair?", value:"mobility_entrance1"},
+    // {question:"Is there a button that automatically opens the door?", value:"mobility_entrance2"},
+    // {question:"Is the restroom in the same floor as the entrance?", value:"mobility_restroom1"}
+    // ]
+
+    console.log("++++LISTQUESTIONS: ",questions, JSON.stringify(questions));
     
-
+    
     let payload = parsed.payload;
     let placeName = parsed.placeName;
     let placeId = parsed.placeId;

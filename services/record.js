@@ -88,11 +88,11 @@ module.exports = class Record {
               Response.genQuickReply(parsed.question, [
                 {
                   title:`Yes`,
-                  payload: JSON.stringify({payload:parsed.payload, item:parsed.item, review:parsed.review, value:"true", placeName:parsed.placeName, placeAddress:parsed.placeAddress, placeId:parsed.placeId})
+                  payload: JSON.stringify({payload:parsed.payload, item:parsed.item, review:parsed.question, value:"true", placeName:parsed.placeName, placeAddress:parsed.placeAddress, placeId:parsed.placeId, displayName:parsed.question})
                 },
                 {
                   title:`No`,
-                  payload: JSON.stringify({payload:parsed.payload, item:parsed.item, review:parsed.review, value:"false", placeName:parsed.placeName, placeAddress:parsed.placeAddress, placeId:parsed.placeId})
+                  payload: JSON.stringify({payload:parsed.payload, item:parsed.item, review:parsed.question, value:"false", placeName:parsed.placeName, placeAddress:parsed.placeAddress, placeId:parsed.placeId, displayName:parsed.question})
                 },
                 // {
                 //   title:`Help me`,
@@ -106,11 +106,11 @@ module.exports = class Record {
               Response.genQuickReply(parsed.question, [
                 {
                   title:`Yes`,
-                  payload: JSON.stringify({payload:parsed.payload, item:parsed.item, review:parsed.review, value:"true", placeName:parsed.placeName, placeAddress:parsed.placeAddress, placeId:parsed.placeId})
+                  payload: JSON.stringify({payload:parsed.payload, item:parsed.item, review:parsed.question, value:"true", placeName:parsed.placeName, placeAddress:parsed.placeAddress, placeId:parsed.placeId, displayName:parsed.question})
                 },
                 {
                   title:`No`,
-                  payload: JSON.stringify({payload:parsed.payload, item:parsed.item, review:parsed.review, value:"false", placeName:parsed.placeName, placeAddress:parsed.placeAddress, placeId:parsed.placeId})
+                  payload: JSON.stringify({payload:parsed.payload, item:parsed.item, review:parsed.question, value:"false", placeName:parsed.placeName, placeAddress:parsed.placeAddress, placeId:parsed.placeId, displayName:parsed.question})
                 },
                 // {
                 //   title:`Help me`,
