@@ -227,37 +227,77 @@ module.exports = class Receive {
    
   }
 
-  // async recordQuestion(payloadRaw){
+  async recordUserQuestion(message){
 
-  //   //Here you should load  previous User Questions
+    //Here you should load  previous User Questions
 
-  //   let parseInfo = function(payload){
-  //     let parsed = JSON.parse(payload); 
-  //     return parsed;
-  //   }
-  //   let payloadParsed = await parseInfo(payloadRaw);
-  //   console.log("STEP 62",payloadParsed);
+    console.log("++++recordUserQuestion:",message)
 
-  //   let record = new Record(this.user, this.webhookEvent);
-  //   let responses = record.handlePayload("RECORD_QUESTION", payloadRaw);
+    let question = message;
+    //100 == visible
+    let status = "100";
 
-  //   console.log("[STEP 64]", responses);
-  //   console.log("[STEP 64B]", JSON.stringify(responses));
-    
-  //   if (Array.isArray(responses)) {
-  //     //console.log('ARRAY RESPONSE:',responses);
-  //     let delay = 0;
-  //     for (let response of responses) {
-  //       this.sendMessage(response, delay * 2000);
-  //       delay++;
-  //     }
-  //   } else {
-  //     //console.log('NOTARRAY RESPONSE:',responses);
-  //     this.sendMessage(responses);
-  //   }
+    let input = {question, status};
+    let newPayload={payload:"RECORD_DEFAULT", question};
+    let payload = "RECORD_QUESTION_SAVED";
+
+    var mutation = `mutation CreateQuestion(
+      $input: CreateQuestionInput!
+    ) {
+      createQuestion(input: $input) {
+        id
+        question
+        status
+      }
+    }`;
+
+    try {
+      const apiResponse = await fetch(
+        config.crudUrl, 
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key':config.crudKey,
+            //'Accept': 'application/json',
+          },
+          body: JSON.stringify({
+            query: mutation,
+            variables:{input},
+          })
+        }
+      );
+
+      const json = await apiResponse.json();
+      
+      let record = new Record(this.user, this.webhookEvent);
+      //MODIFIED
+      let responses = record.handlePayload(payload, JSON.stringify(newPayload));
+      
+
+      //This is going
+
+      if (Array.isArray(responses)) {
+        //console.log('ARRAY RESPONSE:',responses);
+        let delay = 0;
+        for (let response of responses) {
+          this.sendMessage(response, delay * 2000);
+          delay++;
+        }
+      } else {
+        //console.log('NOTARRAY RESPONSE:',responses);
+        this.sendMessage(responses);
+      }
+
+      console.log('CREATE Q API ANSWER',JSON.stringify(json))
+      return json;
+      
+    } catch (error) {
+      console.log('CREATE Q API ERROR',error);
+    }
 
 
-  // }
+  }
 
   async recordSave(payloadRaw){
 
@@ -507,7 +547,7 @@ module.exports = class Receive {
       //IS THAT AT THIS POINT WE ARE CARRYING A WELL ESTABLISHED PLACE ID
       //WE NEED TO HANDLE PAYLOAD, NOT OPEN MESSAGES
       //THIS WAS MOVED TO LINE 385
-      console.log('+++TEST ME');
+      
       this.recordByPlace();
 
       response;
@@ -525,10 +565,12 @@ module.exports = class Receive {
       response;
       
     } else if((nlpIntent ==='request_braile' && nlpIntent.confidence > 0.8) || this.webhookEvent.message.text.includes("braile")){
-      
-      console.log("SELECTED: 527");
-      let location = new Location(this.user, this.webhookEvent);
-      response = location.handlePayload("LOCATION_BRAILE");
+
+      this.recordUserQuestion(message);
+      // let location = new Location(this.user, this.webhookEvent);
+      // response = location.handlePayload("LOCATION_BRAILE");
+
+      response;
 
     }else if((nlpLocation.suggested && nlpLocation.confidence > 0.8)){
       

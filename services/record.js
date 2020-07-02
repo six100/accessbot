@@ -162,6 +162,15 @@ module.exports = class Record {
 
       break;
 
+      case "RECORD_QUESTION_SAVED":
+        response = [
+          //TODO: This should be an utterance by the user, not a hardwired QuickReply
+          Response.genText("Ok, thanks for your question"),
+          Response.genImageById(`597521124473428`),
+          Response.genText(`Do you have another question?`),
+        ];
+        break;
+
       case "RECORD_CHECK":
 
           console.log("+++RECORD_CHECK :", this.apiResponse.data.listReviews.items)

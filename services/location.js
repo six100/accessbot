@@ -316,8 +316,8 @@ module.exports = class Location {
         //Todo: Save User-generated questions 
         response = [
           //TODO: This should be an utterance by the user, not a hardwired QuickReply
-          Response.genText("Ok thanks, We'll be contacting the business owner"),
-          Response.genText(`another question?`),
+          Response.genText("Ok thanks for your question"),
+          Response.genText(`Do you have another question?`),
         ];
         break;
 
