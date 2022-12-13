@@ -16,7 +16,7 @@
     "ejs": "^2.6.2",
     "encodeurl": "^1.0.2",
     "escape-html": "^1.0.3",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "i18n": "^0.8.3",
     "node-fetch": "^2.6.0",
     "node-wit": "^6.0.0",
